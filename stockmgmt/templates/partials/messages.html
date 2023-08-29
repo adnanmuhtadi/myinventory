@@ -1,0 +1,47 @@
+{% if messages %}
+<script>
+    const successMessage = document.querySelector('.messages .success');
+    if (successMessage) {
+        const successText = successMessage.textContent;
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        Toast.fire({
+            icon: 'success',
+            title: successText,
+        })
+    }
+</script>
+
+<script>
+    const errorMessage = document.querySelector('.messages .error');
+    if (errorMessage) {
+        const successText = errorMessage.textContent;
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        Toast.fire({
+            icon: 'error',
+            title: successText,
+        })
+    }
+</script>
+{% endif %}
