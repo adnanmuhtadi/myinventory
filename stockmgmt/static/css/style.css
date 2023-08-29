@@ -50,3 +50,14 @@ th {
     box-shadow: 12px 12px 12px #e61c66;
     text-align: center;
 }
+
+.ui-datepicker{
+	padding: 15px;
+	background-color: whitesmoke;
+	border: 2px solid black;
+	border-radius: 15px;
+}
+
+.ui-datepicker tbody, td, tfoot, th, thead, tr {
+		padding: 5px;
+}
