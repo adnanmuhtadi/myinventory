@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import csv
 from django.contrib import messages
 from .models import *
@@ -407,6 +407,23 @@ def add_room(request):
 
 
 @login_required
+def add_another_room(request):
+    form = RoomCreateForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "The new room has been added.")
+        return redirect('add_room')
+    queryset = Room.objects.all()
+    context = {
+        "form": form,
+        "title": "Add Room",
+        "queryset": queryset,
+    }
+
+    return render(request, "./includes/add_room.html", context)
+
+
+@login_required
 def update_room(request, pk):
     queryset = Room.objects.get(id=pk)
     form = RoomUpdateForm(instance=queryset)
@@ -430,12 +447,9 @@ def update_room(request, pk):
 def delete_room(request, pk):
     queryset = Room.objects.get(id=pk)
     if request.method == 'POST':
+        queryset_name = queryset.name.title()
         queryset.delete()
-        messages.success(
-            request, f"Successfully deleted '{queryset.name.title()}'")
-        return redirect('/add_room')
+        messages.success(request, f"Successfully deleted '{queryset_name}'")
+        return JsonResponse({'success': True, 'message': f'Room "{queryset_name}" deleted successfully'})
 
-    context = {
-        "confirm": f"Are you sure you want to delete the following Room? {queryset.name.title()}",
-    }
-    return render(request, './includes/delete.html', context)
+    return render(request, './includes/delete.html')

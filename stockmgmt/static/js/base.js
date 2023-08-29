@@ -1,3 +1,6 @@
+//
+// Tooptip styling
+//
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
@@ -5,17 +8,15 @@ $(function () {
 
 
 $(document).ready(function () {
-
+  // Progress bar for when the page loads
   NProgress.start();
   NProgress.done();
 
+  //
   $(".datetimeinput").datepicker({
       changeYear: true,
       changeMonth: true,
       dateFormat: 'yy-mm-dd'
   });
 });
-
-
-
 

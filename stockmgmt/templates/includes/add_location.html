@@ -35,7 +35,11 @@
         <tr>
             <td>{{instance.name|title}}</td>
             <td><a href="{% url 'update_location' instance.id %}"><i class="fa-solid fa-pen-to-square px-3"></i></a>
-                <a href="{% url 'delete_location' instance.id %}"><i class="fa-solid fa-trash"></i></a></td>
+                <a onclick="deleteLocationConfirmation('{{ instance.name.title }}',
+                    '{% url 'delete_location' instance.id %}')">
+                    <i class="fa-solid fa-trash px-3"></i>
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </table>

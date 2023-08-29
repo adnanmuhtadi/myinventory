@@ -26,6 +26,9 @@
 
     {% block corejs %}
 
+    <!-- Include SweetAlert2 library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     {% endblock %}
 </head>
 
@@ -35,6 +38,7 @@
         <br>
         <div class="bg-light p-5 rounded">
 
+            <!-- SweetAlert Messages for confirmations -->
             {% if messages %}
             <ul class="messages d-none">
                 {% for message in messages %}
@@ -43,6 +47,7 @@
             </ul>
             {% endif %}
 
+            <!-- Title for each page -->
             <div class="header">{{title}}</div>
 
             {% block content %}
@@ -75,13 +80,12 @@
     <!-- Include Font Awesome kit -->
     <script src="https://kit.fontawesome.com/9b32562ec0.js" crossorigin="anonymous"></script>
 
-    <!-- Include SweetAlert2 library -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <!-- Include progress bar library -->
     <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js"></script>
 
     <!-- Include your custom JavaScript -->
     <script src="{% static '/js/base.js' %}"></script>
+    <script src="{% static '/js/delete_confirm.js' %}"></script>
 
     {% block afterloadjs %}
     <!-- Additional JavaScript specific to your pages can be added here -->

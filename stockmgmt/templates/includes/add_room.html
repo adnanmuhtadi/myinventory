@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Add Category {% endblock %}
+{% block title %} Add Room {% endblock %}
 
 {% load crispy_forms_tags %}
 
@@ -19,6 +19,7 @@
             <div class="btn btn-warning">Back</div>
         </a>
         <input type="submit" value='Save' class="btn btn-primary" />
+        <input type="submit" value='Add Another' class="btn btn-primary" />
     </div>
 </form>
 <br />
@@ -27,14 +28,23 @@
         <thead>
             <tr>
                 <th>NAME</th>
+                <th>QUANTITY</th>
                 <th>UPDATE/DELETE</th>
             </tr>
         </thead>
         {% for instance in queryset %}
         <tr>
-            <td>{{instance.name|title}}</td>
-            <td><a href="{% url 'update_room' instance.id %}"><i class="fa-solid fa-pen-to-square px-3"></i></a>
-                <a href="{% url 'delete_room' instance.id %}"><i class="fa-solid fa-trash"></i></a></td>
+            <td>{{ instance.name|title }}</td>
+            <td>{{ instance.queryset|length }}</td>
+            <td>
+                <a href="{% url 'update_room' instance.id %}">
+                    <i class="fa-solid fa-pen-to-square px-3"></i>
+                </a>
+                <!-- Use 'onclick' attribute to call the deleteConfirmation function -->
+                <a onclick="deleteRoomConfirmation('{{ instance.name.title }}', '{% url 'delete_room' instance.id %}')">
+                    <i class="fa-solid fa-trash px-3"></i>
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </table>

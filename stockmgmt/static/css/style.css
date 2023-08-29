@@ -51,7 +51,12 @@ th {
     text-align: center;
 }
 
+/**********************************
+Date Picker
+**********************************/
+
 .ui-datepicker{
+	display: none;
 	padding: 15px;
 	background-color: whitesmoke;
 	border: 2px solid black;
@@ -60,4 +65,11 @@ th {
 
 .ui-datepicker tbody, td, tfoot, th, thead, tr {
 		padding: 5px;
+}
+
+/**********************************
+Swal2 Styling (buttons)
+**********************************/
+.swal2-confirm {
+	margin: 10px;
 }
