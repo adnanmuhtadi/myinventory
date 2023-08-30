@@ -12,8 +12,13 @@ class StockCreateForm(forms.ModelForm):
             'category',
             'item_name',
             'quantity',
+            'has_warranty',
             'item_notes'
         ]
+        widgets = {
+            # Use CheckboxInput widget for has_warranty field
+            'has_warranty': forms.CheckboxInput()
+        }
 
 
 class StockSearchForm(forms.ModelForm):
@@ -37,8 +42,13 @@ class StockUpdateForm(forms.ModelForm):
             'category',
             'item_name',
             'quantity',
+            'has_warranty',
             'item_notes'
         ]
+        widgets = {
+            # Use CheckboxInput widget for has_warranty field
+            'has_warranty': forms.CheckboxInput()
+        }
 
 
 class IssueForm(forms.ModelForm):

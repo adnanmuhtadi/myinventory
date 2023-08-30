@@ -21,6 +21,11 @@
             {{ form.item_name|as_crispy_field }}
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            {{ form.export_to_CSV|as_crispy_field }}
+        </div>
+    </div>
     <input type="submit" value="Search" />
 </form>
 <br>
@@ -35,6 +40,7 @@
                 <th>QUANTITY</th>
                 <th>TIMESTAMP</th>
                 <th>LAST UPDATED</th>
+                <th>Has Warranty</th>
                 <th>UPDATE/DELETE</th>
             </tr>
         </thead>
@@ -55,6 +61,12 @@
 
             <td>{{instance.timestamp}}</td>
             <td>{{instance.last_updated}}</td>
+            <td>{% if instance.has_warranty %}
+                Yes
+                {% else %}
+                No
+                {% endif %}
+            </td>
             <td><a href="{% url 'receive_items' instance.id %}"><i class="fa-solid fa-hand-holding-hand px-3"
                         data-toggle="tooltip" data-placement="top" title="Receiving an item"></i></a>
                 <a href="{% url 'issue_items' instance.id %}"><i class="fa-solid fa-hand-holding px-3"
@@ -72,8 +84,6 @@
 {% endblock %}
 
 {% block afterloadjs %}
-
-{% include '../partials/messages.html' %}
 
 <script>
     $(document).ready(function () {

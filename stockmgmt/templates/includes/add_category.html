@@ -14,27 +14,40 @@
             {{ form.name|as_crispy_field }}
         </div>
     </div>
+    <!-- For the back button to go back to the previous screen and the save button 
+    to back to the add-item page while save another will save and stay on the page -->
     <div class="form-group">
         <a id="back-button" href="" onclick="javascript:window.history.back(-1);return false;">
             <div class="btn btn-warning">Back</div>
         </a>
-        <input type="submit" value='Save' class="btn btn-primary" />
+        <input type="submit" name="save" value='Save' class="btn btn-primary" />
+        <input type="submit" name="add_another" value='Add Another' class="btn btn-primary" />
     </div>
 </form>
+
 <br />
+
+<!-- The delete icon will take the id of the title and activate 
+    the sweetalert where the confirmation would take place-->
 <div class="display_table" id="display_table">
     <table class='table'>
         <thead>
             <tr>
                 <th>NAME</th>
+                <th>COUNT OF ITEMS</th>
                 <th>UPDATE/DELETE</th>
             </tr>
         </thead>
-        {% for instance in queryset %}
+        {% for instance in categories %}
         <tr>
-            <td>{{instance.name|title}}</td>
+            <td>{{ instance.name|title }}</td>
+            <td>{{ instance.total_quantity }}</td>
             <td><a href="{% url 'update_category' instance.id %}"><i class="fa-solid fa-pen-to-square px-3"></i></a>
-                <a href="{% url 'delete_category' instance.id %}"><i class="fa-solid fa-trash"></i></a></td>
+                <a class="pointer"
+                    onclick="deleteCategoryConfirmation('{{ instance.name.title }}', '{% url 'delete_category' instance.id %}')">
+                    <i class="fa-solid fa-trash px-3"></i>
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -43,34 +56,5 @@
 {% endblock %}
 
 {% block afterloadjs %}
-
-<script>
-    // Get the current URL
-    var currentUrl = window.location.href;
-
-    // Check if the URL contains "/update_"
-    if (currentUrl.includes("/update_")) {
-        // Hide the div
-        document.getElementById("display_table").style.display = "none";
-    }
-</script>
-
-<script>
-    // Get a reference to the display_table element
-    const displayTable = document.querySelector('.display_table');
-
-    // Get a reference to the back button element
-    const backButton = document.getElementById('back-button');
-
-    // Check if the display_table element is visible
-    function isDisplayTableVisible() {
-        return window.getComputedStyle(displayTable).display !== 'none';
-    }
-
-    // Hide the back button if the display_table element is visible
-    if (isDisplayTableVisible()) {
-        backButton.setAttribute('hidden', 'true');
-    }
-</script>
 
 {% endblock %}

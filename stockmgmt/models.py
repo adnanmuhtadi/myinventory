@@ -53,6 +53,7 @@ class Stock(models.Model):
     reorder_level = models.IntegerField(default='3', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    has_warranty = models.BooleanField(default=False, blank=False, null=True)
     item_notes = models.TextField(max_length=500, blank=True, null=True)
 
     def __str__(self):

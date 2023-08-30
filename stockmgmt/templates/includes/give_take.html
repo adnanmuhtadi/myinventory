@@ -9,7 +9,10 @@
 <form method="POST">
     {% csrf_token %}
     {{ form|crispy }}
+
     <br />
+    <!-- For the back button to go back to the previous screen and the save button 
+    to back to the add-item page while save another will save and stay on the page -->
     <div class="form-group">
         <a href="" onclick="javascript:window.history.back(-1);return false;">
             <div class="btn btn-warning">Back</div>

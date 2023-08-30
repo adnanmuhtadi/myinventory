@@ -34,7 +34,7 @@ function deleteRoomConfirmation(roomName, deleteUrl) {
           // Delay the page reload by 2 seconds
           setTimeout(function () {
             location.reload();
-          }, 100); // 2000 milliseconds = 2 seconds
+          }, 2500); // 2000 milliseconds = 2 seconds
         },
         error: function (error) {
           swalWithBootstrapButtons.fire('Error', 'An error occurred while deleting the room.', 'error');
@@ -82,7 +82,7 @@ function deleteLocationConfirmation(locationName, deleteUrl) {
           // Delay the page reload by 2 seconds
           setTimeout(function () {
             location.reload();
-          }, 100); // 1000 milliseconds = 1 seconds
+          }, 2500); // 1000 milliseconds = 1 seconds
         },
         error: function (error) {
           swalWithBootstrapButtons.fire('Error', 'An error occurred while deleting the location.', 'error');
@@ -90,6 +90,54 @@ function deleteLocationConfirmation(locationName, deleteUrl) {
       });
     } else if (result.dismiss === Swal.DismissReason.cancel) {
       swalWithBootstrapButtons.fire('Cancelled', 'Your location is safe :)', 'info');
+    }
+  });
+}
+
+// Category Delete 
+
+function deleteCategoryConfirmation(categoryName, deleteUrl) {
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+
+  swalWithBootstrapButtons.fire({
+    title: `You are about to delete the category "${categoryName}". This action cannot be undone.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, cancel',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Use AJAX to call the delete_category view
+      $.ajax({
+        type: 'POST',
+        url: deleteUrl,
+        headers: {
+          'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        success: function (data) {
+          swalWithBootstrapButtons.fire('Deleted!', data.message, 'success');
+
+        // Remove the deleted category's row from the table
+          const categoryId = data.category_id;
+          $('#category-' + categoryId).remove();
+          // Delay the page reload by 2 seconds
+          setTimeout(function () {
+            category.reload();
+          }, 2500); // 1000 milliseconds = 1 seconds
+        },
+        error: function (error) {
+          swalWithBootstrapButtons.fire('Error', 'An error occurred while deleting the category.', 'error');
+        }
+      });
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      swalWithBootstrapButtons.fire('Cancelled', 'Your category is safe :)', 'info');
     }
   });
 }

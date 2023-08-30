@@ -29,10 +29,17 @@
             {{ form.quantity|as_crispy_field }}
         </div>
         <div>
+            {{ form.has_warranty|as_crispy_field }}
+        </div>
+        <div>
             {{ form.item_notes|as_crispy_field }}
         </div>
     </div>
+
     <br />
+
+    <!-- For the back button to go back to the previous screen and the save button 
+    to back to the add-item page while save another will save and stay on the page -->
     <div class="form-group">
         <a id="back-button" href="" onclick="javascript:window.history.back(-1);return false;">
             <div class="btn btn-warning">Back</div>
@@ -44,26 +51,5 @@
 {% endblock %}
 
 {% block afterloadjs %}
-
-{% include '../partials/messages.html' %}
-
-<script>
-    // Get a reference to the display_table element
-    const displayTable = document.querySelector('.display_table');
-
-    // Get a reference to the back button element
-    const backButton = document.getElementById('back-button');
-
-    // Check if the display_table element is visible
-    function isDisplayTableVisible() {
-        return window.getComputedStyle(displayTable).display !== 'none';
-    }
-
-    // Hide the back button if the display_table element is visible
-    if (isDisplayTableVisible()) {
-        backButton.setAttribute('hidden', 'true');
-    }
-</script>
-
 
 {% endblock %}

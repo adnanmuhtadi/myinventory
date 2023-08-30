@@ -27,6 +27,11 @@
             {{ form.end_date|as_crispy_field }}
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            {{ form.export_to_CSV|as_crispy_field }}
+        </div>
+    </div>
     <input type="submit" value="Search" />
 </form>
 <br>
@@ -64,7 +69,7 @@
             <td>{{instance.receive_quantity}}</td>
             <td>{{instance.issue_to}}</td>
             <td>{{instance.issue_by}}</td>
-            <td>{{instance.last_updated}}</td>
+            <td>{{instance.last_updated|date:"d-m-Y"}}</td>
         </tr>
         {% endfor %}
     </table>

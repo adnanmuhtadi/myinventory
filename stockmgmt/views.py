@@ -9,6 +9,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.db.models import Sum, Subquery, OuterRef, Count
+from django.db.models.functions import Coalesce
 
 
 ############################################################
@@ -84,30 +86,52 @@ def list_history(request):
     }
 
     if request.method == 'POST':
-        category = form['category'].value()
-        item_name = form['item_name'].value()
+        household = form['household'].value()
+        room = form['room'].value()
+        category = request.POST.get('category')
+        item_name = request.POST.get('item_name')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
 
-        if item_name is not None:
+        if item_name:
             queryset = queryset.filter(item_name__icontains=item_name)
+            if start_date and end_date:
+                queryset = queryset.filter(
+                    last_updated__range=[start_date, end_date])
 
-        if category is not None and category != '':
+        if category:
             queryset = queryset.filter(category_id=category)
 
-        start_date = form['start_date'].value()
-        end_date = form['end_date'].value()
+        if room is not None and room != '':
+            queryset = queryset.filter(room_id=room)
+
+        if household is not None and household != '':
+            queryset = queryset.filter(household_id=household)
 
         if start_date and end_date:
             try:
                 if start_date >= end_date:
                     context["error_message"] = "Start date cannot be after end date."
-
+                else:
+                    queryset = queryset.filter(
+                        last_updated__range=[start_date, end_date])
             except ValidationError:
                 messages.error(
                     request, "Invalid date format. Please use YYYY-MM-DD.")
 
+        if form['export_to_CSV'].value() == True:
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="List of stock.csv"'
+            writer = csv.writer(response)
+            writer.writerow(['CATEGORY', 'ITEM NAME', 'QUANTITY'])
+            instance = queryset
+            for stock in instance:
+                writer.writerow(
+                    [stock.category, stock.item_name, stock.quantity])
+                return response
+
         context.update({
             "form": form,
-            "title": title,
             "queryset": queryset,
         })
 
@@ -282,15 +306,32 @@ def reorder_level(request, pk):
 @login_required
 def add_category(request):
     form = CategoryCreateForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        messages.success(request, "The new category has been added.")
-        return redirect('add_items')
-    queryset = Category.objects.all()
+    if request.method == "POST":
+        if "save" in request.POST:
+            if form.is_valid():
+                form.save()
+                messages.success(request, "The new category has been added.")
+                return redirect('add_items')
+        elif "add_another" in request.POST:
+            if form.is_valid():
+                form.save()
+                messages.success(request, "The new category has been added.")
+                return redirect('add_category')
+
+    # Annotate the categories with total quantity per category
+    categories = Category.objects.annotate(
+        total_quantity=Coalesce(Subquery(
+            Stock.objects.filter(category=OuterRef('pk'))
+            .values('category')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        ), 0)
+    )
+
     context = {
         "form": form,
         "title": "Add Category",
-        "queryset": queryset,
+        "categories": categories,
     }
 
     return render(request, "./includes/add_category.html", context)
@@ -325,10 +366,7 @@ def delete_category(request, pk):
                          str(queryset.name) + "' has been deleted.")
         return redirect('/add_category')
 
-    context = {
-        "confirm": f"Are you sure you want to delete the following Category? {queryset.name.title()}",
-    }
-    return render(request, './includes/delete.html', context)
+    return render(request, './includes/delete.html')
 
 
 ############################################################
@@ -337,15 +375,30 @@ def delete_category(request, pk):
 @login_required
 def add_location(request):
     form = LocationCreateForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        messages.success(request, "The new location has been added.")
-        return redirect('add_items')
-    queryset = Location.objects.all()
+    if request.method == "POST":
+        if "save" in request.POST:
+            if form.is_valid():
+                form.save()
+                messages.success(request, "The new location has been added.")
+                return redirect('add_items')
+        elif "add_another" in request.POST:
+            if form.is_valid():
+                form.save()
+                messages.success(request, "The new location has been added.")
+                return redirect('add_location')
+
+    locations = Location.objects.annotate(
+        total_quantity=Coalesce(Subquery(
+            Stock.objects.filter(location=OuterRef('pk'))
+            .values('location')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        ), 0)
+    )
     context = {
         "form": form,
         "title": "Add Location",
-        "queryset": queryset,
+        "locations": locations,
     }
 
     return render(request, "./includes/add_location.html", context)
@@ -380,44 +433,38 @@ def delete_location(request, pk):
                          str(queryset.name) + "' has been deleted.")
         return redirect('/add_location')
 
-    context = {
-        "confirm": f"Are you sure you want to delete the following Location? {queryset.name.title()}",
-    }
-    return render(request, './includes/delete.html', context)
+    return render(request, './includes/delete.html')
 
 
 ############################################################
 # Add Room & view table, Update Room, Delete Room
 ############################################################
-@login_required
 def add_room(request):
     form = RoomCreateForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        messages.success(request, "The new room has been added.")
-        return redirect('add_items')
-    queryset = Room.objects.all()
+    if request.method == "POST":
+        if "save" in request.POST:
+            if form.is_valid():
+                form.save()
+                messages.success(request, "The new room has been added.")
+                return redirect('add_items')
+        elif "add_another" in request.POST:
+            if form.is_valid():
+                form.save()
+                messages.success(request, "The new room has been added.")
+                return redirect('add_room')
+
+    rooms = Room.objects.annotate(
+        total_quantity=Coalesce(Subquery(
+            Stock.objects.filter(room=OuterRef('pk'))
+            .values('room')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        ), 0)
+    )
     context = {
         "form": form,
         "title": "Add Room",
-        "queryset": queryset,
-    }
-
-    return render(request, "./includes/add_room.html", context)
-
-
-@login_required
-def add_another_room(request):
-    form = RoomCreateForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        messages.success(request, "The new room has been added.")
-        return redirect('add_room')
-    queryset = Room.objects.all()
-    context = {
-        "form": form,
-        "title": "Add Room",
-        "queryset": queryset,
+        "rooms": rooms,
     }
 
     return render(request, "./includes/add_room.html", context)

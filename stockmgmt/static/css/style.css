@@ -43,14 +43,6 @@ th {
     font-weight: bolder;
 }
 
-.success{
-    list-style: none;
-    background-color: #2e6da4;
-    color: white;
-    box-shadow: 12px 12px 12px #e61c66;
-    text-align: center;
-}
-
 /**********************************
 Date Picker
 **********************************/
@@ -72,4 +64,8 @@ Swal2 Styling (buttons)
 **********************************/
 .swal2-confirm {
 	margin: 10px;
+}
+
+.pointer {
+	cursor: pointer;
 }

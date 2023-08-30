@@ -1,6 +1,4 @@
-//
 // Tooptip styling
-//
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
@@ -12,11 +10,10 @@ $(document).ready(function () {
   NProgress.start();
   NProgress.done();
 
-  //
+  // datepicker for the items history
   $(".datetimeinput").datepicker({
       changeYear: true,
       changeMonth: true,
       dateFormat: 'yy-mm-dd'
   });
 });
-
