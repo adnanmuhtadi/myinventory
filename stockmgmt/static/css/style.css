@@ -69,3 +69,13 @@ Swal2 Styling (buttons)
 .pointer {
 	cursor: pointer;
 }
+
+.multi-line-btn {
+    padding: 5px 10px; /* Adjust padding for proper button height */
+    white-space: normal; /* Allow line breaks */
+    text-align: center; /* Center the text */
+    border: none; /* Remove button border if needed */
+    background-color: #007bff; /* Primary button color */
+    color: #fff; /* Text color */
+}
+

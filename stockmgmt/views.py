@@ -141,23 +141,26 @@ def list_history(request):
 @login_required
 @receiver(post_save, sender=Stock)
 def create_stock_history(sender, instance, **kwargs):
-    stock_history_data = {
-        "last_updated": instance.last_updated,
-        "category_id": instance.category_id,
-        "location_id": instance.location_id,
-        "room_id": instance.room_id,
-        "household_id": instance.household_id,
-        "item_name": instance.item_name,
-        "issue_to": instance.issue_to,
-        "issue_by": instance.issue_by,
-    }
-
     if instance.issue_quantity == 0:
-        stock_history_data["quantity"] = instance.quantity
-        stock_history_data["receive_quantity"] = instance.receive_quantity
+        stock_history_data = {
+            "last_updated": instance.last_updated,
+            "category_id": instance.category_id,
+            "item_name": instance.item_name,
+            "quantity": instance.quantity,
+            "receive_quantity": instance.receive_quantity,
+            "issue_to": instance.issue_to,
+            "issue_by": instance.issue_by
+        }
     else:
-        stock_history_data["issue_quantity"] = instance.issue_quantity
-        stock_history_data["quantity"] = instance.quantity
+        stock_history_data = {
+            "last_updated": instance.last_updated,
+            "category_id": instance.category_id,
+            "item_name": instance.item_name,
+            "issue_quantity": instance.issue_quantity,
+            "issue_to": instance.issue_to,
+            "issue_by": instance.issue_by,
+            "quantity": instance.quantity
+        }
 
     StockHistory.objects.create(**stock_history_data)
 
@@ -232,22 +235,40 @@ def issue_items(request, pk):
     queryset = Stock.objects.get(id=pk)
     form = IssueForm(request.POST or None, instance=queryset)
 
-    if form.is_valid():
-        instance = form.save(commit=False)
-        if instance.issue_quantity > 0 and instance.issue_quantity <= instance.quantity:
-            instance.quantity -= instance.issue_quantity
-            instance.issue_by = str(request.user)
-            messages.success(request, str(instance.item_name) + " has been issued to " + str(instance.issue_to) +
-                             ". There are now " + str(instance.quantity) + " left in Store")
-            instance.save()
-            return redirect('/item_detail/'+str(instance.id))
-        else:
-            if instance.issue_quantity <= 0:
-                messages.error(
-                    request, "Issue quantity must be greater than 0.")
+    if "save" in request.POST:
+        if form.is_valid():
+            instance = form.save(commit=False)
+            if instance.issue_quantity > 0 and instance.issue_quantity <= instance.quantity:
+                instance.quantity -= instance.issue_quantity
+                instance.issue_by = str(request.user)
+                messages.success(request, str(instance.item_name) + " has been issued to " + str(instance.issue_to) +
+                                 ". There are now " + str(instance.quantity) + " left in Store")
+                instance.save()
+                return redirect("/list_items")
             else:
-                messages.error(
-                    request, "Issue quantity exceeds available quantity.")
+                if instance.issue_quantity <= 0:
+                    messages.error(
+                        request, "Issue quantity must be greater than 0.")
+                else:
+                    messages.error(
+                        request, "Issue quantity exceeds available quantity.")
+    elif "add_another" in request.POST:
+        if form.is_valid():
+            instance = form.save(commit=False)
+            if instance.issue_quantity > 0 and instance.issue_quantity <= instance.quantity:
+                instance.quantity -= instance.issue_quantity
+                instance.issue_by = str(request.user)
+                messages.success(request, str(instance.item_name) + " has been issued to " + str(instance.issue_to) +
+                                 ". There are now " + str(instance.quantity) + " left in Store")
+                instance.save()
+                return redirect('/item_detail/'+str(instance.id))
+            else:
+                if instance.issue_quantity <= 0:
+                    messages.error(
+                        request, "Issue quantity must be greater than 0.")
+                else:
+                    messages.error(
+                        request, "Issue quantity exceeds available quantity.")
 
     context = {
         "title": 'Issue ' + str(queryset.item_name),
@@ -262,17 +283,18 @@ def issue_items(request, pk):
 def receive_items(request, pk):
     queryset = Stock.objects.get(id=pk)
     form = ReceiveForm(request.POST or None, instance=queryset)
-    if form.is_valid():
-        instance = form.save(commit=False)
-        instance.quantity += instance.receive_quantity
-        messages.success(request, str(instance.item_name) + " has been received by " + str(instance.issue_to) +
-                         ". There are now " + str(instance.quantity) + " in Store")
-        instance.save()
+    if request.method == "POST":
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.quantity += instance.receive_quantity
+            instance.save()
+            messages.success(request, "Received SUCCESSFULLY. " + str(
+                instance.quantity) + " " + str(instance.item_name)+"s now in Store")
 
-        return redirect('/item_detail/'+str(instance.id))
-        # return HttpResponseRedirect(instance.get_absolute_url())
+            return redirect('/item_detail/'+str(instance.id))
+
     context = {
-        "title": 'Receive ' + str(queryset.item_name),
+        "title": 'ReceiveForm ' + str(queryset.item_name),
         "instance": queryset,
         "form": form,
         "username": 'Receive By: ' + str(request.user),

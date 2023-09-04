@@ -21,12 +21,24 @@
             <th>{{queryset.item_name}}</th>
         </tr>
         <tr>
-            <th>QUANTITY IN STORE</th>
-            <th>{{queryset.quantity}}</th>
+            <th>CATEGORY</th>
+            <th>{{queryset.category}}</th>
         </tr>
         <tr>
-            <th>LAST UPDATED</th>
-            <th>{{queryset.last_updated}}</th>
+            <th>LOCATION</th>
+            <th>{{queryset.location}}</th>
+        </tr>
+        <tr>
+            <th>ROOM</th>
+            <th>{{queryset.room}}</th>
+        </tr>
+        <tr>
+            <th>HOUSEHOLD</th>
+            <th>{{queryset.household}}</th>
+        </tr>
+        <tr>
+            <th>QUANTITY AVAILABLE</th>
+            <th>{{queryset.quantity}}</th>
         </tr>
         <tr>
             <th>REORDER LEVEL</th>
@@ -36,6 +48,19 @@
                     {{queryset.reorder_level}}
                 </a>
             </td>
+        </tr>
+        <tr>
+            <th>LAST UPDATED</th>
+            <th>{{queryset.last_updated|date:"d-m-Y"}}</th>
+        </tr>
+        <tr>
+            <th>HAS WARRANTY</th>
+            <th>{% if instance.has_warranty %}
+                Yes
+                {% else %}
+                No
+                {% endif %}
+            </th>
         </tr>
         <tr>
             <th>ITEM NOTES</th>

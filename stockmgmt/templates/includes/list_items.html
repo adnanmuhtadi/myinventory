@@ -35,20 +35,20 @@
         <thead>
             <tr>
                 <th>COUNT</th>
-                <th>CATEGORY</th>
                 <th>ITEM NAME</th>
+                <th>CATEGORY</th>
+                <th>ROOM</th>
                 <th>QUANTITY</th>
-                <th>TIMESTAMP</th>
-                <th>LAST UPDATED</th>
-                <th>Has Warranty</th>
+                <th>HAS WARRANTY</th>
                 <th>UPDATE/DELETE</th>
             </tr>
         </thead>
         {% for instance in queryset %}
         <tr>
             <td>{{forloop.counter}}</td>
+            <td><a href="{% url 'update_items' instance.id %}">{{instance.item_name|title}}</a></td>
             <td>{{instance.category}}</td>
-            <td><a href="{% url 'update_items' instance.id %}">{{instance.item_name}}</a></td>
+            <td>{{instance.room}}</td>
             <td>
                 {% if instance.quantity <= instance.reorder_level %}
                 <div style="background-color: orange;">
@@ -58,9 +58,6 @@
                 {{instance.quantity}}</a>
                 {% endif %}
             </td>
-
-            <td>{{instance.timestamp}}</td>
-            <td>{{instance.last_updated}}</td>
             <td>{% if instance.has_warranty %}
                 Yes
                 {% else %}

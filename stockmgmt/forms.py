@@ -28,8 +28,14 @@ class StockSearchForm(forms.ModelForm):
 
     class Meta:
         model = Stock
-        fields = ['household', 'room', 'category',
-                  'item_name', 'start_date', 'end_date']
+        fields = [
+            'household',
+            'room',
+            'category',
+            'item_name',
+            'start_date',
+            'end_date'
+        ]
 
 
 class StockUpdateForm(forms.ModelForm):
