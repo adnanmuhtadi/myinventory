@@ -41,6 +41,8 @@ def list_items(request):
         room = form['room'].value()
         category = form['category'].value()
         item_name = form['item_name'].value()
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
 
         if item_name is not None:  # Check if item_name is not None
             queryset = queryset.filter(item_name__icontains=item_name)
@@ -53,6 +55,17 @@ def list_items(request):
 
         if household is not None and household != '':
             queryset = queryset.filter(household_id=household)
+
+            if start_date and end_date:
+                try:
+                    if start_date >= end_date:
+                        context["error_message"] = "Start date cannot be after end date."
+                    else:
+                        queryset = queryset.filter(
+                            last_updated__range=[start_date, end_date])
+                except ValidationError:
+                    messages.error(
+                        request, "Invalid date format. Please use YYYY-MM-DD.")
 
         if form['export_to_CSV'].value() == True:
             response = HttpResponse(content_type='text/csv')
@@ -72,97 +85,6 @@ def list_items(request):
     }
 
     return render(request, "./includes/list_items.html", context)
-
-
-@login_required
-def list_history(request):
-    title = 'History Of Items'
-    queryset = StockHistory.objects.all()
-    form = StockSearchForm(request.POST or None)
-    context = {
-        "title": title,
-        "queryset": queryset,
-        "form": form,
-    }
-
-    if request.method == 'POST':
-        household = form['household'].value()
-        room = form['room'].value()
-        category = request.POST.get('category')
-        item_name = request.POST.get('item_name')
-        start_date = request.POST.get('start_date')
-        end_date = request.POST.get('end_date')
-
-        if item_name:
-            queryset = queryset.filter(item_name__icontains=item_name)
-            if start_date and end_date:
-                queryset = queryset.filter(
-                    last_updated__range=[start_date, end_date])
-
-        if category:
-            queryset = queryset.filter(category_id=category)
-
-        if room is not None and room != '':
-            queryset = queryset.filter(room_id=room)
-
-        if household is not None and household != '':
-            queryset = queryset.filter(household_id=household)
-
-        if start_date and end_date:
-            try:
-                if start_date >= end_date:
-                    context["error_message"] = "Start date cannot be after end date."
-                else:
-                    queryset = queryset.filter(
-                        last_updated__range=[start_date, end_date])
-            except ValidationError:
-                messages.error(
-                    request, "Invalid date format. Please use YYYY-MM-DD.")
-
-        if form['export_to_CSV'].value() == True:
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="List of stock.csv"'
-            writer = csv.writer(response)
-            writer.writerow(['CATEGORY', 'ITEM NAME', 'QUANTITY'])
-            instance = queryset
-            for stock in instance:
-                writer.writerow(
-                    [stock.category, stock.item_name, stock.quantity])
-                return response
-
-        context.update({
-            "form": form,
-            "queryset": queryset,
-        })
-
-    return render(request, "./includes/list_history.html", context)
-
-
-@login_required
-@receiver(post_save, sender=Stock)
-def create_stock_history(sender, instance, **kwargs):
-    if instance.issue_quantity == 0:
-        stock_history_data = {
-            "last_updated": instance.last_updated,
-            "category_id": instance.category_id,
-            "item_name": instance.item_name,
-            "quantity": instance.quantity,
-            "receive_quantity": instance.receive_quantity,
-            "issue_to": instance.issue_to,
-            "issue_by": instance.issue_by
-        }
-    else:
-        stock_history_data = {
-            "last_updated": instance.last_updated,
-            "category_id": instance.category_id,
-            "item_name": instance.item_name,
-            "issue_quantity": instance.issue_quantity,
-            "issue_to": instance.issue_to,
-            "issue_by": instance.issue_by,
-            "quantity": instance.quantity
-        }
-
-    StockHistory.objects.create(**stock_history_data)
 
 
 ############################################################
@@ -271,7 +193,7 @@ def issue_items(request, pk):
                         request, "Issue quantity exceeds available quantity.")
 
     context = {
-        "title": 'Issue ' + str(queryset.item_name),
+        "title": 'Item Out - ' + str(queryset.item_name),
         "queryset": queryset,
         "form": form,
         "username": 'Issue By: ' + str(request.user),
@@ -283,18 +205,29 @@ def issue_items(request, pk):
 def receive_items(request, pk):
     queryset = Stock.objects.get(id=pk)
     form = ReceiveForm(request.POST or None, instance=queryset)
-    if request.method == "POST":
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.quantity += instance.receive_quantity
-            instance.save()
-            messages.success(request, "Received SUCCESSFULLY. " + str(
-                instance.quantity) + " " + str(instance.item_name)+"s now in Store")
 
-            return redirect('/item_detail/'+str(instance.id))
+    if request.method == "POST":
+        if 'save' in request.POST:  # Check if the "Save & Back to Item Detail" button was clicked
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.quantity += instance.receive_quantity
+                instance.save()
+                messages.success(request, "Received SUCCESSFULLY. " + str(
+                    instance.quantity) + " " + str(instance.item_name)+"s now in Store")
+                # Redirect to item detail page
+                return redirect('/item_detail/'+str(instance.id))
+
+        elif 'add_another' in request.POST:  # Check if the "Save & Back to Item List" button was clicked
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.quantity += instance.receive_quantity
+                instance.save()
+                messages.success(request, "Received SUCCESSFULLY. " + str(
+                    instance.quantity) + " " + str(instance.item_name)+"s now in Store")
+                return redirect('/list_items')  # Redirect to item list
 
     context = {
-        "title": 'ReceiveForm ' + str(queryset.item_name),
+        "title": 'Item In - ' + str(queryset.item_name),
         "instance": queryset,
         "form": form,
         "username": 'Receive By: ' + str(request.user),
@@ -306,13 +239,25 @@ def receive_items(request, pk):
 def reorder_level(request, pk):
     queryset = Stock.objects.get(id=pk)
     form = ReorderLevelForm(request.POST or None, instance=queryset)
-    if form.is_valid():
-        instance = form.save(commit=False)
-        instance.save()
-        messages.success(request, "Reorder level for " + str(instance.item_name) +
-                         " is updated to " + str(instance.reorder_level))
 
-        return redirect("/list_items")
+    if request.method == 'POST':
+        if 'save' in request.POST:  # Check if the "Save & Back to Item List" button was clicked
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, "Reorder level for " + str(instance.item_name) +
+                                 " is updated to " + str(instance.reorder_level))
+                return redirect("/list_items")  # Redirect to the item list
+
+        elif 'add_another' in request.POST:  # Check if the "Save & Back to Item Detail" button was clicked
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, "Reorder level for " + str(instance.item_name) +
+                                 " is updated to " + str(instance.reorder_level))
+                # Redirect to item detail page
+                return redirect("/item_detail/" + str(instance.id))
+
     context = {
         "title": f"Reordering Item for: {queryset.item_name}",
         "instance": queryset,

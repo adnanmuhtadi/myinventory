@@ -15,11 +15,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'list_items' %}">List Items</a>
                 </li>
-                {% if request.user.is_superuser %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'list_history' %}">List History</a>
-                </li>
-                {% endif %}
                 {% if request.user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'add_items' %}">Add Item</a>

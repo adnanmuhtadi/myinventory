@@ -12,6 +12,7 @@ class StockCreateForm(forms.ModelForm):
             'category',
             'item_name',
             'quantity',
+            'reorder_level',
             'has_warranty',
             'item_notes'
         ]
@@ -48,6 +49,7 @@ class StockUpdateForm(forms.ModelForm):
             'category',
             'item_name',
             'quantity',
+            'reorder_level',
             'has_warranty',
             'item_notes'
         ]
@@ -60,13 +62,16 @@ class StockUpdateForm(forms.ModelForm):
 class IssueForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ['issue_quantity', 'issue_to']
+        fields = [
+            'issue_quantity',
+            'item_usage'
+        ]
 
 
 class ReceiveForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ['receive_quantity', 'receive_by']
+        fields = ['receive_quantity']
 
 
 class ReorderLevelForm(forms.ModelForm):
