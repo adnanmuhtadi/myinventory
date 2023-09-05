@@ -10,7 +10,7 @@ function deleteRoomConfirmation(roomName, deleteUrl) {
   });
 
   swalWithBootstrapButtons.fire({
-    title: `You are about to delete the room "${roomName}". This action cannot be undone.`,
+    title: `You are about to delete the room "${roomName}". This action cannot be undone!`,
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Yes, delete it!',

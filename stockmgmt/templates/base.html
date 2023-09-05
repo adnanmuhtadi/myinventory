@@ -59,35 +59,6 @@
 
     </main>
 
-    <script>
-        // Get the current URL
-        var currentUrl = window.location.href;
-
-        // Check if the URL contains "/update_"
-        if (currentUrl.includes("/update_")) {
-            // Hide the div
-            document.getElementById("display_table").style.display = "none";
-        }
-    </script>
-
-    <script>
-        // Get a reference to the display_table element
-        const displayTable = document.querySelector('.display_table');
-
-        // Get a reference to the back button element
-        const backButton = document.getElementById('back-button');
-
-        // Check if the display_table element is visible
-        function isDisplayTableVisible() {
-            return window.getComputedStyle(displayTable).display !== 'none';
-        }
-
-        // Hide the back button if the display_table element is visible
-        if (isDisplayTableVisible()) {
-            backButton.setAttribute('hidden', 'true');
-        }
-    </script>
-
     <!-- Include jQuery library -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

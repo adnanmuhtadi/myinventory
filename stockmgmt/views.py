@@ -277,12 +277,14 @@ def add_category(request):
         if "save" in request.POST:
             if form.is_valid():
                 form.save()
-                messages.success(request, "The new category has been added.")
+                messages.success(
+                    request, "The new category has been added successfully")
                 return redirect('add_items')
         elif "add_another" in request.POST:
             if form.is_valid():
                 form.save()
-                messages.success(request, "The new category has been added.")
+                messages.success(
+                    request, "The new category has been added successfully")
                 return redirect('add_category')
 
     # Annotate the categories with total quantity per category
@@ -313,7 +315,7 @@ def update_category(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "The category '" +
-                             str(queryset.name) + "' has been updated.")
+                             str(queryset.name) + "' has been updated successfully")
             return redirect('/add_category')
 
     context = {
@@ -328,10 +330,11 @@ def update_category(request, pk):
 def delete_category(request, pk):
     queryset = Category.objects.get(id=pk)
     if request.method == 'POST':
+        queryset_name = queryset.name.title()
         queryset.delete()
-        messages.success(request, "The category '" +
-                         str(queryset.name) + "' has been deleted.")
-        return redirect('/add_category')
+        messages.success(
+            request, f"The category '{queryset_name}' has been deleted successfully")
+        return JsonResponse({'success': True, 'message': f'Category "{queryset_name}" has been deleted successfully'})
 
     return render(request, './includes/delete.html')
 
@@ -346,12 +349,14 @@ def add_location(request):
         if "save" in request.POST:
             if form.is_valid():
                 form.save()
-                messages.success(request, "The new location has been added.")
+                messages.success(
+                    request, "The new location has been added successfully")
                 return redirect('add_items')
         elif "add_another" in request.POST:
             if form.is_valid():
                 form.save()
-                messages.success(request, "The new location has been added.")
+                messages.success(
+                    request, "The new location has been added successfully")
                 return redirect('add_location')
 
     locations = Location.objects.annotate(
@@ -379,7 +384,7 @@ def update_location(request, pk):
         form = LocationUpdateForm(request.POST, instance=queryset)
         if form.is_valid():
             messages.success(request, "The location '" +
-                             str(queryset.name) + "' has been updated.")
+                             str(queryset.name) + "' has been updated successfully")
             form.save()
             return redirect('/add_location')
 
@@ -395,10 +400,11 @@ def update_location(request, pk):
 def delete_location(request, pk):
     queryset = Location.objects.get(id=pk)
     if request.method == 'POST':
+        queryset_name = queryset.name.title()
         queryset.delete()
-        messages.success(request, "The location '" +
-                         str(queryset.name) + "' has been deleted.")
-        return redirect('/add_location')
+        messages.success(
+            request, f"The location '{queryset_name}' has been deleted successfully")
+        return JsonResponse({'success': True, 'message': f'Location "{queryset_name}" has been deleted successfully'})
 
     return render(request, './includes/delete.html')
 
@@ -412,12 +418,14 @@ def add_room(request):
         if "save" in request.POST:
             if form.is_valid():
                 form.save()
-                messages.success(request, "The new room has been added.")
+                messages.success(
+                    request, "The new room has been added successfully")
                 return redirect('add_items')
         elif "add_another" in request.POST:
             if form.is_valid():
                 form.save()
-                messages.success(request, "The new room has been added.")
+                messages.success(
+                    request, "The new room has been added successfully")
                 return redirect('add_room')
 
     rooms = Room.objects.annotate(
@@ -446,7 +454,7 @@ def update_room(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "The room '" +
-                             str(queryset.name) + "' has been updated.")
+                             str(queryset.name) + "' has been updated successfully")
             return redirect('/add_room')
 
     context = {
@@ -463,7 +471,8 @@ def delete_room(request, pk):
     if request.method == 'POST':
         queryset_name = queryset.name.title()
         queryset.delete()
-        messages.success(request, f"Successfully deleted '{queryset_name}'")
-        return JsonResponse({'success': True, 'message': f'Room "{queryset_name}" deleted successfully'})
+        messages.success(
+            request, f"The room '{queryset_name}' has been deleted successfully")
+        return JsonResponse({'success': True, 'message': f'Room "{queryset_name}" has been deleted successfully'})
 
     return render(request, './includes/delete.html')

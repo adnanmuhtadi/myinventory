@@ -17,16 +17,21 @@
     <!-- For the back button to go back to the previous screen and the save button 
     to back to the add-item page while save another will save and stay on the page -->
     <div class="form-group">
+        {% if 'add' not in request.path %}
         <a id="back-button" href="" onclick="javascript:window.history.back(-1);return false;">
             <div class="btn btn-warning">Back</div>
         </a>
+        {% endif %}
         <input type="submit" name="save" value='Save' class="btn btn-primary" />
+        {% if 'update' not in request.path %}
         <input type="submit" name="add_another" value='Add Another' class="btn btn-primary" />
+        {% endif %}
     </div>
 </form>
 
 <br />
 
+{% if 'update' not in request.path %}
 <!-- The delete icon will take the id of the title and activate 
     the sweetalert where the confirmation would take place-->
 <div class="display_table" id="display_table">
@@ -52,6 +57,7 @@
         {% endfor %}
     </table>
 </div>
+{% endif %}
 
 {% endblock %}
 
