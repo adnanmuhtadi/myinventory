@@ -9,33 +9,113 @@
 <form method="POST">
     {% csrf_token %}
     <!--{{ form|crispy }}-->
-    <div>
-        <div>
-            {{ form.household|as_crispy_field }}
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.household.id_for_label }}">Household</label>
         </div>
-        <div>
-            {{ form.room|as_crispy_field }}
+        <div class="col-9">
+            {{ form.household }}
         </div>
-        <div>
-            {{ form.location|as_crispy_field }}
+        <div class="col">
         </div>
-        <div>
-            {{ form.category|as_crispy_field }}
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.room.id_for_label }}">Room</label>
         </div>
-        <div>
-            {{ form.item_name|as_crispy_field }}
+        <div class="col-9">
+            {{ form.room }}
         </div>
-        <div>
-            {{ form.quantity|as_crispy_field }}
+        <div class="col">
+            <a href="{% url 'add_room' %}"><i class="fa-solid fa-plus"></i></a>
         </div>
-        <div>
-            {{ form.reorder_level|as_crispy_field }}
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.location.id_for_label }}">Location</label>
         </div>
-        <div>
-            {{ form.has_warranty|as_crispy_field }}
+        <div class="col-9">
+            {{ form.location }}
         </div>
-        <div>
-            {{ form.item_notes|as_crispy_field }}
+        <div class="col">
+            <a href="{% url 'add_location' %}"><i class="fa-solid fa-plus"></i></a>
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.category.id_for_label }}">Category</label>
+        </div>
+        <div class="col-9">
+            {{ form.category }}
+        </div>
+        <div class="col">
+            <a href="{% url 'add_category' %}"><i class="fa-solid fa-plus"></i></a>
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.item_name.id_for_label }}">Item Name</label>
+        </div>
+        <div class="col-9">
+            {{ form.item_name }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.quantity.id_for_label }}">Quantity</label>
+        </div>
+        <div class="col-9">
+            {{ form.quantity }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.reorder_level.id_for_label }}">Reorder Level</label>
+        </div>
+        <div class="col-9">
+            {{ form.reorder_level }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.has_warranty.id_for_label }}">Has Warranty</label>
+        </div>
+        <div class="col-9">
+            {{ form.has_warranty }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="form-group col">
+            <label for="{{ form.item_notes.id_for_label }}">Notes</label>
+        </div>
+        <div class="col-9">
+            {{ form.item_notes }}
+        </div>
+        <div class="col">
         </div>
     </div>
 
