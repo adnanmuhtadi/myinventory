@@ -3,8 +3,8 @@
 function deleteRoomConfirmation(roomName, deleteUrl) {
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
-      confirmButton: 'btn btn-success',
-      cancelButton: 'btn btn-danger'
+      confirmButton: 'custom-btn btn btn-success',
+      cancelButton: 'custom-btn btn btn-danger'
     },
     buttonsStyling: false
   });
@@ -51,8 +51,8 @@ function deleteRoomConfirmation(roomName, deleteUrl) {
 function deleteLocationConfirmation(locationName, deleteUrl) {
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
-      confirmButton: 'btn btn-success',
-      cancelButton: 'btn btn-danger'
+      confirmButton: 'custom-btn btn btn-success',
+      cancelButton: 'custom-btn btn btn-danger'
     },
     buttonsStyling: false
   });
@@ -99,8 +99,8 @@ function deleteLocationConfirmation(locationName, deleteUrl) {
 function deleteCategoryConfirmation(categoryName, deleteUrl) {
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
-      confirmButton: 'btn btn-success',
-      cancelButton: 'btn btn-danger'
+      confirmButton: 'custom-btn btn btn-success',
+      cancelButton: 'custom-btn btn btn-danger'
     },
     buttonsStyling: false
   });

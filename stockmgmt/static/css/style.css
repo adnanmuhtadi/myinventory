@@ -24,6 +24,10 @@ th {
 	color: #000000;
 }
 
+.container{
+	padding-top: 3rem;
+}
+
 .display_table{
 	border-bottom-right-radius: 20px;
 	border-bottom-left-radius: 20px;
@@ -70,7 +74,7 @@ Swal2 Styling (buttons)
 	cursor: pointer;
 }
 
-.multi-line-btn {
+.multi-line-custom-btn btn {
     padding: 5px 10px; /* Adjust padding for proper button height */
     white-space: normal; /* Allow line breaks */
     text-align: center; /* Center the text */
@@ -79,3 +83,31 @@ Swal2 Styling (buttons)
     color: #fff; /* Text color */
 }
 
+
+@media (min-width: 992px) and (max-width: 1025px){
+	.navbar-nav {
+		font-size: small;
+	}
+
+}
+
+@media (min-width: 768px) and (max-width: 908px){
+	.header{
+    	font-size: 40px;
+	}
+}
+
+@media (max-width: 425px){
+	.container{
+		padding-top: 0;
+	}
+
+	.header{
+    	font-size: 30px;
+	}
+
+	.custom-btn {
+		font-size: 15px;
+		padding: 5px;
+	}
+}
