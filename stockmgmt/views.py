@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db.models import Sum, Subquery, OuterRef, Count
 from django.db.models.functions import Coalesce
+from django.core.paginator import Paginator
 
 
 ############################################################
@@ -71,12 +72,27 @@ def list_items(request):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="List of stock.csv"'
             writer = csv.writer(response)
-            writer.writerow(['CATEGORY', 'ITEM NAME', 'QUANTITY'])
+            writer.writerow([
+                'ITEM NAME',
+                'CATEGORY',
+                'ROOM',
+                'LOCATION',
+                'HOUSEHOLD',
+                'QUANTITY',
+                'HAS WARRANTY'
+            ])
             instance = queryset
             for stock in instance:
-                writer.writerow(
-                    [stock.category, stock.item_name, stock.quantity])
-                return response
+                writer.writerow([
+                    stock.item_name,
+                    stock.category,
+                    stock.room,
+                    stock.location,
+                    stock.household,
+                    stock.quantity,
+                    stock.has_warranty
+                ])
+            return response
 
     context = {
         "form": form,
@@ -85,6 +101,67 @@ def list_items(request):
     }
 
     return render(request, "./includes/list_items.html", context)
+
+
+@login_required
+def list_history(request):
+    header = 'LIST OF ITEMS'
+    queryset = StockHistory.objects.all().order_by('-last_updated')
+
+    # Create a Paginator instance with the queryset and specify the number of items per page
+    # Change '10' to the desired number of items per page
+    paginator = Paginator(queryset, 10)
+
+    # Get the current page number from the request's GET parameters
+    page_number = request.GET.get('page')
+
+    # Get the Page object for the current page
+    page = paginator.get_page(page_number)
+
+    context = {
+        "header": header,
+        "page": page,  # Pass the Page object to the template
+    }
+    return render(request, "./includes/list_history.html", context)
+
+
+@receiver(post_save, sender=Stock)
+def copy_to_stock_history(sender, instance, created, **kwargs):
+    if created:  # Check if a new Stock object is created
+        # Copy data to StockHistory
+        StockHistory.objects.create(
+            category=instance.category,
+            item_name=instance.item_name,
+            quantity=instance.quantity,
+            receive_quantity=instance.receive_quantity,
+            receive_by=instance.receive_by,
+            issue_quantity=instance.issue_quantity,
+            issue_by=instance.issue_by,
+            issue_to=instance.issue_to,
+            phone_number=instance.phone_number,
+            created_by=instance.created_by,
+            reorder_level=instance.reorder_level,
+            last_updated=instance.last_updated,
+            timestamp=instance.timestamp
+        )
+    else:  # Handle updates to existing Stock objects
+        # You can choose how to handle updates here, e.g., creating a new StockHistory entry or updating an existing one
+        # For simplicity, let's create a new entry on each update
+        StockHistory.objects.create(
+            category=instance.category,
+            item_name=instance.item_name,
+            quantity=instance.quantity,
+            receive_quantity=instance.receive_quantity,
+            receive_by=instance.receive_by,
+            issue_quantity=instance.issue_quantity,
+            issue_by=instance.issue_by,
+            issue_to=instance.issue_to,
+            phone_number=instance.phone_number,
+            created_by=instance.created_by,
+            reorder_level=instance.reorder_level,
+            last_updated=instance.last_updated,
+            timestamp=instance.timestamp
+        )
 
 
 ############################################################
@@ -154,77 +231,72 @@ def item_detail(request, pk):
 
 @login_required
 def issue_items(request, pk):
+    # Get the Stock object based on the primary key (pk)
     queryset = Stock.objects.get(id=pk)
     form = IssueForm(request.POST or None, instance=queryset)
 
-    if "save" in request.POST:
-        if form.is_valid():
-            instance = form.save(commit=False)
-            if instance.issue_quantity > 0 and instance.issue_quantity <= instance.quantity:
-                instance.quantity -= instance.issue_quantity
-                instance.issue_by = str(request.user)
-                messages.success(request, str(instance.item_name) + " has been issued to " + str(instance.issue_to) +
-                                 ". There are now " + str(instance.quantity) + " left in Store")
-                instance.save()
+    if form.is_valid():
+        instance = form.save(commit=False)
+        if instance.issue_quantity > 0 and instance.issue_quantity <= instance.quantity:
+            instance.quantity -= instance.issue_quantity
+            instance.receive_quantity = 0
+            instance.issue_by = str(request.user)
+            messages.success(
+                request, f"{instance.item_name} has been issued to {instance.issue_to}. There are now {instance.issue_quantity} left in Store")
+            instance.save()
+
+            if "add_another" in request.POST:
+                return redirect('/item_detail/' + str(instance.id))
+            else:
                 return redirect("/list_items")
+        else:
+            if instance.issue_quantity <= 0:
+                messages.error(
+                    request, "Issue quantity must be greater than 0.")
             else:
-                if instance.issue_quantity <= 0:
-                    messages.error(
-                        request, "Issue quantity must be greater than 0.")
-                else:
-                    messages.error(
-                        request, "Issue quantity exceeds available quantity.")
-    elif "add_another" in request.POST:
-        if form.is_valid():
-            instance = form.save(commit=False)
-            if instance.issue_quantity > 0 and instance.issue_quantity <= instance.quantity:
-                instance.quantity -= instance.issue_quantity
-                instance.issue_by = str(request.user)
-                messages.success(request, str(instance.item_name) + " has been issued to " + str(instance.issue_to) +
-                                 ". There are now " + str(instance.quantity) + " left in Store")
-                instance.save()
-                return redirect('/item_detail/'+str(instance.id))
-            else:
-                if instance.issue_quantity <= 0:
-                    messages.error(
-                        request, "Issue quantity must be greater than 0.")
-                else:
-                    messages.error(
-                        request, "Issue quantity exceeds available quantity.")
+                messages.error(
+                    request, "Issue quantity exceeds available quantity.")
+    else:
+        form = IssueForm()  # Create a new empty form for GET requests
 
     context = {
-        "title": 'Item Out - ' + str(queryset.item_name),
+        "title": f'Item Out - {queryset.item_name}',
         "queryset": queryset,
         "form": form,
-        "username": 'Issue By: ' + str(request.user),
+        "username": f'Issue By: {request.user}',
     }
     return render(request, "./includes/give_take.html", context)
 
 
 @login_required
 def receive_items(request, pk):
+    # Get the Stock object based on the primary key (pk)
     queryset = Stock.objects.get(id=pk)
     form = ReceiveForm(request.POST or None, instance=queryset)
 
     if request.method == "POST":
-        if 'save' in request.POST:  # Check if the "Save & Back to Item Detail" button was clicked
-            if form.is_valid():
-                instance = form.save(commit=False)
-                instance.quantity += instance.receive_quantity
-                instance.save()
-                messages.success(request, "Received SUCCESSFULLY. " + str(
-                    instance.quantity) + " " + str(instance.item_name)+"s now in Store")
-                # Redirect to item detail page
-                return redirect('/item_detail/'+str(instance.id))
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.quantity += instance.receive_quantity
+            instance.issue_quantity = 0  # Set issue_quantity to 0
+            messages.success(
+                request, f"{instance.item_name} has been issued to {instance.issue_to}. There are now {instance.receive_quantity} left in Store")
+            instance.save()
 
-        elif 'add_another' in request.POST:  # Check if the "Save & Back to Item List" button was clicked
-            if form.is_valid():
-                instance = form.save(commit=False)
-                instance.quantity += instance.receive_quantity
-                instance.save()
-                messages.success(request, "Received SUCCESSFULLY. " + str(
-                    instance.quantity) + " " + str(instance.item_name)+"s now in Store")
-                return redirect('/list_items')  # Redirect to item list
+            if "add_another" in request.POST:
+                return redirect('/item_detail/' + str(instance.id))
+            else:
+                return redirect("/list_items")
+        else:
+            if instance.issue_quantity <= 0:
+                messages.error(
+                    request, "Received quantity must be greater than 0.")
+            else:
+                messages.error(
+                    request, "Received quantity exceeds available quantity.")
+
+    else:
+        form = ReceiveForm()  # Create a new empty form for GET requests
 
     context = {
         "title": 'Item In - ' + str(queryset.item_name),

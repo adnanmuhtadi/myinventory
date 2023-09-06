@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %} History of Items {% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<br><br>
+<div class="display_table">
+    <table class='table'>
+        <thead>
+            <tr>
+                <th>COUNT</th>
+                <th>ID</th>
+                <th>CATEGORY</th>
+                <th>ITEM NAME</th>
+                <th>QUANTITY IN STORE</th>
+                <th>ISSUE QUANTITY</th>
+                <th>RECEIVE QUANTITY</th>
+                <th>LAST UPDATED</th>
+            </tr>
+        </thead>
+        {% for item in page %}
+        <tr>
+
+            <td>{{forloop.counter}}</td>
+            <td>{{item.id}}</td>
+            <td>{{item.category}}</td>
+            <td>{{item.item_name}}</td>
+            <td>{{item.quantity}}</td>
+            <td>{{item.issue_quantity}}</td>
+            <td>{{item.receive_quantity}}</td>
+            <td>{{item.last_updated|date:"d-m-Y"}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<br />
+<div class="form-group">
+    <a id="back-button" href="" onclick="javascript:window.history.back(-1);return false;">
+        <div class="custom-btn btn btn-warning">Back</div>
+    </a>
+</div>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item">
+            {% if page.has_previous %}
+            <a class="page-link" href="?page=1">&laquo; First</a>
+            {% else %}
+            <span class="page-link disabled">&laquo; First</span>
+            {% endif %}
+        </li>
+        <li class="page-item">
+            {% if page.has_previous %}
+            <a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a>
+            {% else %}
+            <span class="page-link disabled">Previous</span>
+            {% endif %}
+        </li>
+        <li class="page-item">
+            <span class="page-link">
+                Page {{ page.number }} of {{ page.paginator.num_pages }}
+            </span>
+        </li>
+        <li class="page-item">
+            {% if page.has_next %}
+            <a class="page-link" href="?page={{ page.next_page_number }}">Next</a>
+            {% else %}
+            <span class="page-link disabled">Next</span>
+            {% endif %}
+        </li>
+        <li class="page-item">
+            {% if page.has_next %}
+            <a class="page-link" href="?page={{ page.paginator.num_pages }}">Last &raquo;</a>
+            {% else %}
+            <span class="page-link disabled">Last &raquo;</span>
+            {% endif %}
+        </li>
+    </ul>
+</nav>
+
+
+{% endblock %}
+
+{% block afterloadjs %}
+
+{% include '../partials/messages.html' %}
+
+{% endblock %}

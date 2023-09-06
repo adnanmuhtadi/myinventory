@@ -13,6 +13,8 @@
             didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
+                toast.style.top = (parseInt(getComputedStyle(toast).top) + 50) +
+                    'px'; // Adjust the top value
             }
         })
 
@@ -37,6 +39,8 @@
             didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
+                toast.style.top = (parseInt(getComputedStyle(toast).top) + 50) +
+                    'px'; // Adjust the top value
             }
         })
 

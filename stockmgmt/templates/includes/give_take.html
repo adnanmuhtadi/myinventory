@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<form method="POST">
+<form method="POST" id="your-form">
     {% csrf_token %}
     {{ form|crispy }}
 
@@ -25,5 +25,16 @@
         </button>
     </div>
 </form>
+
+<script>
+    // Add this JavaScript code to clear form fields when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('your-form');
+        if (form) {
+            // Reset the form fields
+            form.reset();
+        }
+    });
+</script>
 
 {% endblock %}

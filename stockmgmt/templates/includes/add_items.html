@@ -10,112 +10,112 @@
     {% csrf_token %}
     <!--{{ form|crispy }}-->
     <br>
-    <div class="row">
-        <div class="form-group col">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.household.id_for_label }}">Household</label>
         </div>
-        <div class="col col-auto">
+        <div class="col-8">
             {{ form.household }}
         </div>
-        <div class="col">
+        <div class="col-1">
         </div>
     </div>
     <br>
-    <div class="row">
-        <div class="form-group col col-sm-1">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.room.id_for_label }}">Room</label>
         </div>
-        <div class="col-7 col-sm-auto">
+        <div class="col-8">
             {{ form.room }}
         </div>
-        <div class="col-2">
+        <div class="col-1">
             <a href="{% url 'add_room' %}"><i class="fa-solid fa-plus"></i></a>
         </div>
     </div>
 
     <br>
-    <div class="row">
-        <div class="form-group col-12 col-sm-1">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.location.id_for_label }}">Location</label>
         </div>
-        <div class="col-12 col-sm">
+        <div class="col-8">
             {{ form.location }}
         </div>
-        <div class="col-12 col-sm-1">
+        <div class="col-1">
             <a href="{% url 'add_location' %}"><i class="fa-solid fa-plus"></i></a>
         </div>
     </div>
 
     <br>
-    <div class="row">
-        <div class="form-group col">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.category.id_for_label }}">Category</label>
         </div>
-        <div class="col-9 col-md-8">
+        <div class="col-8">
             {{ form.category }}
         </div>
-        <div class="col">
+        <div class="col-1">
             <a href="{% url 'add_category' %}"><i class="fa-solid fa-plus"></i></a>
         </div>
     </div>
 
     <br>
-    <div class="row">
-        <div class="form-group col">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.item_name.id_for_label }}">Item Name</label>
         </div>
-        <div class="col-9 col-md-8">
+        <div class="col-8">
             {{ form.item_name }}
         </div>
-        <div class="col">
+        <div class="col-1">
         </div>
     </div>
 
     <br>
-    <div class="row">
-        <div class="form-group col">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.quantity.id_for_label }}">Quantity</label>
         </div>
-        <div class="col-9 col-md-8">
+        <div class="col-8">
             {{ form.quantity }}
         </div>
-        <div class="col">
+        <div class="col-1">
         </div>
     </div>
 
     <br>
-    <div class="row">
-        <div class="form-group col">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.reorder_level.id_for_label }}">Reorder Level</label>
         </div>
-        <div class="col-9 col-md-8">
+        <div class="col-8">
             {{ form.reorder_level }}
         </div>
-        <div class="col">
+        <div class="col-1">
         </div>
     </div>
 
     <br>
-    <div class="row">
-        <div class="form-group col">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.has_warranty.id_for_label }}">Has Warranty</label>
         </div>
-        <div class="col-9 col-md-8">
+        <div class="col-8">
             {{ form.has_warranty }}
         </div>
-        <div class="col">
+        <div class="col-1">
         </div>
     </div>
 
     <br>
-    <div class="row">
-        <div class="form-group col">
+    <div class="row mx-auto">
+        <div class="form-group custom-label col-3 text-md-end">
             <label for="{{ form.item_notes.id_for_label }}">Notes</label>
         </div>
-        <div class="col-9 col-md-8">
+        <div class="col-8">
             {{ form.item_notes }}
         </div>
-        <div class="col">
+        <div class="col-1">
         </div>
     </div>
 
@@ -123,7 +123,7 @@
 
     <!-- For the back button to go back to the previous screen and the save button 
     to back to the add-item page while save another will save and stay on the page -->
-    <div class="form-group text-md-center">
+    <div class="form-group text-center">
         <a id="back-button" href="" onclick="javascript:window.history.back(-1);return false;">
             <div class="custom-btn btn btn-warning">Back</div>
         </a>

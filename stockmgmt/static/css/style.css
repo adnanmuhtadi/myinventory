@@ -47,6 +47,10 @@ th {
     font-weight: bolder;
 }
 
+.custom-icon {
+	padding: 0 1rem;
+}
+
 /**********************************
 Date Picker
 **********************************/
@@ -95,6 +99,10 @@ Swal2 Styling (buttons)
 	.header{
     	font-size: 40px;
 	}
+
+	.custom-icon{
+		padding: 0 0.5rem;
+	}
 }
 
 @media (max-width: 425px){
@@ -109,5 +117,14 @@ Swal2 Styling (buttons)
 	.custom-btn {
 		font-size: 15px;
 		padding: 5px;
+	}
+
+	.custom-label {
+		margin: 0;
+		padding: 0;
+	}
+
+	.custom-icon{
+		padding: 0.2rem;
 	}
 }

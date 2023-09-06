@@ -22,6 +22,7 @@ from custom_registration.views import CustomRegistrationView
 urlpatterns = [
     path('', views.home, name='home'),
     path('list_items/', views.list_items, name='list_items'),
+    path('list_history/', views.list_history, name='list_history'),
     path('item_detail/<str:pk>/', views.item_detail, name="item_detail"),
     path('issue_items/<str:pk>/', views.issue_items, name="issue_items"),
     path('receive_items/<str:pk>/', views.receive_items, name="receive_items"),
