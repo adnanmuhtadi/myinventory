@@ -71,6 +71,7 @@ class StockHistory(models.Model):
     issue_quantity = models.IntegerField(default='0', blank=True, null=True)
     issue_by = models.CharField(max_length=50, blank=True, null=True)
     issue_to = models.CharField(max_length=50, blank=True, null=True)
+    item_usage = models.TextField(max_length=500, blank=True, null=True)
     phone_number = models.CharField(max_length=50, blank=True, null=True)
     created_by = models.CharField(max_length=50, blank=True, null=True)
     reorder_level = models.IntegerField(default='0', blank=True, null=True)

@@ -116,7 +116,57 @@ def list_items(request):
 @login_required
 def list_history(request):
     title = 'Items Audit Log'
+    form = StockSearchForm(request.POST or None)
     queryset = StockHistory.objects.all().order_by('-last_updated')
+
+    if request.method == 'POST':
+        category = form['category'].value()
+        item_name = form['item_name'].value()
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        if category:
+            queryset = queryset.filter(category_id=category)
+
+        if item_name:
+            queryset = queryset.filter(item_name__icontains=item_name)
+
+            # Apply date range filter if both start and end dates are provided
+            if start_date and end_date:
+                try:
+                    if start_date >= end_date:
+                        messages.error(
+                            request, "Start date cannot be after end date")
+                    else:
+                        queryset = queryset.filter(
+                            last_updated__range=[start_date, end_date])
+                except ValidationError:
+                    messages.error(
+                        request, "Invalid date format. Please use YYYY-MM-DD")
+
+        if form['export_to_CSV'].value() == True:
+            # Export data to CSV if the export checkbox is selected
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="Stock History.csv"'
+            writer = csv.writer(response)
+            writer.writerow([
+                'CATEGORY',
+                'ITEM NAME',
+                'QUANTITY',
+                'ISSUE QUANTITY',
+                'RECEIVE QUANTITY',
+                'LAST UPDATED'
+            ])
+            for stock in queryset:
+                writer.writerow([
+                    stock.category,
+                    stock.item_name,
+                    stock.quantity,
+                    stock.issue_quantity,
+                    stock.receive_quantity,
+                    stock.last_updated
+                ])
+            return response
 
     # Create a Paginator instance with the queryset and specify the number of items per page
     # Change '10' to the desired number of items per page
@@ -129,7 +179,9 @@ def list_history(request):
     page = paginator.get_page(page_number)
 
     context = {
+        "form": form,
         "title": title,
+        "queryset": queryset,
         "page": page,  # Pass the Page object to the template
     }
     return render(request, "./includes/list_history.html", context)
@@ -148,6 +200,7 @@ def copy_to_stock_history(sender, instance, created, **kwargs):
             issue_quantity=instance.issue_quantity,
             issue_by=instance.issue_by,
             issue_to=instance.issue_to,
+            item_usage=instance.item_usage,
             phone_number=instance.phone_number,
             created_by=instance.created_by,
             reorder_level=instance.reorder_level,
@@ -166,6 +219,7 @@ def copy_to_stock_history(sender, instance, created, **kwargs):
             issue_quantity=instance.issue_quantity,
             issue_by=instance.issue_by,
             issue_to=instance.issue_to,
+            item_usage=instance.item_usage,
             phone_number=instance.phone_number,
             created_by=instance.created_by,
             reorder_level=instance.reorder_level,
