@@ -12,6 +12,7 @@ class StockCreateAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Stock, StockCreateAdmin)
+admin.site.register(StockHistory)
 admin.site.register(Category)
 admin.site.register(Location)
 admin.site.register(Room)

@@ -10,7 +10,7 @@ class Household(models.Model):
 
 
 class Room(models.Model):
-    name = models.CharField(max_length=50, blank=True,
+    name = models.CharField(max_length=50, blank=False,
                             null=True, help_text="Which room is the item at?")
 
     def __str__(self):
@@ -18,7 +18,7 @@ class Room(models.Model):
 
 
 class Location(models.Model):
-    name = models.CharField(max_length=50, blank=True,
+    name = models.CharField(max_length=50, blank=False,
                             null=True, help_text="Where is the item located?")
 
     def __str__(self):
@@ -26,7 +26,7 @@ class Location(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, blank=True, null=True,
+    name = models.CharField(max_length=50, blank=False, null=True,
                             help_text="What category is the item related to? (such Cables/Computer Parts/Tools?)")
 
     def __str__(self):

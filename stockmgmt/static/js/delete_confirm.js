@@ -1,3 +1,50 @@
+// Item Delete
+function deleteItemConfirmation(itemName, deleteUrl) {
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'custom-btn btn btn-success',
+      cancelButton: 'custom-btn btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+
+  swalWithBootstrapButtons.fire({
+    title: `You are about to delete the item "${itemName}". This action cannot be undone!`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, cancel',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Use AJAX to call the delete_room view
+      $.ajax({
+        type: 'POST',
+        url: deleteUrl,
+        headers: {
+          'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        success: function (data) {
+          swalWithBootstrapButtons.fire('Deleted!', data.message, 'success');
+
+        // Remove the deleted room's row from the table
+          const itemId = data.item_id;
+          $('#item-' + itemId).remove();
+          // Delay the page reload by 2 seconds
+          setTimeout(function () {
+            location.reload();
+          }, 2500); // 2000 milliseconds = 2 seconds
+        },
+        error: function (error) {
+          swalWithBootstrapButtons.fire('Error', 'An error occurred while deleting the item.', 'error');
+        }
+      });
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      swalWithBootstrapButtons.fire('Cancelled', 'Your item is safe :)', 'info');
+    }
+  });
+}
+
 // Room Delete
 
 function deleteRoomConfirmation(roomName, deleteUrl) {

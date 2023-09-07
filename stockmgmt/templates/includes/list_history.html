@@ -6,7 +6,8 @@
 
 {% block content %}
 
-<br><br>
+<br>
+
 <div class="display_table">
     <table class='table'>
         <thead>
@@ -16,14 +17,13 @@
                 <th>CATEGORY</th>
                 <th>ITEM NAME</th>
                 <th>QUANTITY IN STORE</th>
-                <th>ISSUE QUANTITY</th>
-                <th>RECEIVE QUANTITY</th>
+                <th>ITEM OUT</th>
+                <th>ITEM IN</th>
                 <th>LAST UPDATED</th>
             </tr>
         </thead>
         {% for item in page %}
         <tr>
-
             <td>{{forloop.counter}}</td>
             <td>{{item.id}}</td>
             <td>{{item.category}}</td>
@@ -31,56 +31,94 @@
             <td>{{item.quantity}}</td>
             <td>{{item.issue_quantity}}</td>
             <td>{{item.receive_quantity}}</td>
-            <td>{{item.last_updated|date:"d-m-Y"}}</td>
+            <td>{{item.last_updated|date:"Y-m-d H:i:s"}}</td>
         </tr>
         {% endfor %}
     </table>
 </div>
 <br />
 <div class="form-group">
-    <a id="back-button" href="" onclick="javascript:window.history.back(-1);return false;">
+    <a id="back-button" onclick="javascript:window.history.back(-1);return false;">
         <div class="custom-btn btn btn-warning">Back</div>
     </a>
 </div>
 
-<nav aria-label="Page navigation example">
-    <ul class="pagination">
-        <li class="page-item">
-            {% if page.has_previous %}
-            <a class="page-link" href="?page=1">&laquo; First</a>
-            {% else %}
-            <span class="page-link disabled">&laquo; First</span>
-            {% endif %}
-        </li>
-        <li class="page-item">
-            {% if page.has_previous %}
-            <a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a>
-            {% else %}
-            <span class="page-link disabled">Previous</span>
-            {% endif %}
-        </li>
-        <li class="page-item">
-            <span class="page-link">
-                Page {{ page.number }} of {{ page.paginator.num_pages }}
-            </span>
-        </li>
-        <li class="page-item">
-            {% if page.has_next %}
-            <a class="page-link" href="?page={{ page.next_page_number }}">Next</a>
-            {% else %}
-            <span class="page-link disabled">Next</span>
-            {% endif %}
-        </li>
-        <li class="page-item">
-            {% if page.has_next %}
-            <a class="page-link" href="?page={{ page.paginator.num_pages }}">Last &raquo;</a>
-            {% else %}
-            <span class="page-link disabled">Last &raquo;</span>
-            {% endif %}
-        </li>
-    </ul>
-</nav>
+<div class="d-sm-none d-md-block d-sm-none d-none">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                {% if page.has_previous %}
+                <a class="page-link" href="?page=1">&laquo; First</a>
+                {% else %}
+                <span class="page-link disabled">&laquo; First</span>
+                {% endif %}
+            </li>
+            <li class="page-item">
+                {% if page.has_previous %}
+                <a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a>
+                {% else %}
+                <span class="page-link disabled">Previous</span>
+                {% endif %}
+            </li>
+            <li class="page-item">
+                <span class="page-link">
+                    Page {{ page.number }} of {{ page.paginator.num_pages }}
+                </span>
+            </li>
+            <li class="page-item">
+                {% if page.has_next %}
+                <a class="page-link" href="?page={{ page.next_page_number }}">Next</a>
+                {% else %}
+                <span class="page-link disabled">Next</span>
+                {% endif %}
+            </li>
+            <li class="page-item">
+                {% if page.has_next %}
+                <a class="page-link" href="?page={{ page.paginator.num_pages }}">Last &raquo;</a>
+                {% else %}
+                <span class="page-link disabled">Last &raquo;</span>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+</div>
 
+<div class="d-sm-block d-md-none d-block">
+    <!-- Add Bootstrap Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="First">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">{{ page.number }} <span class="sr-only">(current)</span></span>
+            </li>
+
+            {% if page.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Last">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
 
 {% endblock %}
 

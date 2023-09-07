@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<form method="POST">
+<form method="POST" class="custom-fields">
     {% csrf_token %}
     <!--{{ form|crispy }}-->
     <div>
@@ -18,7 +18,7 @@
     to back to the add-item page while save another will save and stay on the page -->
     <div class="form-group">
         {% if 'add' not in request.path %}
-        <a id="back-button" href="" onclick="javascript:window.history.back(-1);return false;">
+        <a id="back-button" onclick="javascript:window.history.back(-1);return false;">
             <div class="custom-btn btn btn-warning">Back</div>
         </a>
         {% endif %}

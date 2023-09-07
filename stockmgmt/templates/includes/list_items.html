@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %} Item List Page {% endblock %}
+{% block title %}Item List Page{% endblock %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
-
 <form method="POST" action="" class="d-lg-block d-md-none d-sm-none d-none">
     {% csrf_token %}
     <div class="row">
@@ -69,7 +68,6 @@
     </div>
 </div>
 
-
 <br>
 
 <!-- Large Table Begins -->
@@ -86,35 +84,36 @@
                 <th>UPDATE/DELETE</th>
             </tr>
         </thead>
-        {% for instance in queryset %}
+        {% for stock in items %}
         <tr>
-            <td>{{forloop.counter}}</td>
-            <td><a href="{% url 'update_items' instance.id %}">{{instance.item_name|title}}</a></td>
-            <td>{{instance.category}}</td>
-            <td>{{instance.room}}</td>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="{% url 'update_items' stock.id %}">{{ stock.item_name|title }}</a></td>
+            <td>{{ stock.category }}</td>
+            <td>{{ stock.room }}</td>
             <td>
-                {% if instance.quantity <= instance.reorder_level %}
+                {% if stock.quantity <= stock.reorder_level %}
                 <div style="background-color: orange;">
-                    {{instance.quantity}}
+                    {{ stock.quantity }}
                 </div>
                 {% else %}
-                {{instance.quantity}}
+                {{ stock.quantity }}
                 {% endif %}
             </td>
             <td>
-                {% if instance.has_warranty %}
+                {% if stock.has_warranty %}
                 Yes
                 {% else %}
                 No
                 {% endif %}
             </td>
-            <td><a href="{% url 'receive_items' instance.id %}"><i class="fa-solid fa-hand-holding-hand px-3"
+            <td>
+                <a href="{% url 'receive_items' stock.id %}"><i class="fa-solid fa-hand-holding-hand custom-icon"
                         data-toggle="tooltip" data-placement="top" title="Item In"></i></a>
-                <a href="{% url 'issue_items' instance.id %}"><i class="fa-solid fa-hand-holding px-3"
+                <a href="{% url 'issue_items' stock.id %}"><i class="fa-solid fa-hand-holding custom-icon"
                         data-toggle="tooltip" data-placement="top" title="Item Out"></i></a>
-                <a href="{% url 'item_detail' instance.id %}"><i class="fa-solid fa-info px-3"></i></a>
-                <a href="{% url 'update_items' instance.id %}"><i class="fa-solid fa-pen-to-square px-3"></i></a>
-                <a href="{% url 'delete_items' instance.id %}"><i class="fa-solid fa-trash"></i></a>
+                <a href="{% url 'item_detail' stock.id %}"><i class="fa-solid fa-info custom-icon"></i></a>
+                <a href="{% url 'update_items' stock.id %}"><i class="fa-solid fa-pen-to-square custom-icon"></i></a>
+                <a href="{% url 'delete_items' stock.id %}"><i class="fa-solid fa-trash"></i></a>
             </td>
         </tr>
         {% endfor %}
@@ -133,55 +132,56 @@
                 <th>UPDATE/DELETE</th>
             </tr>
         </thead>
-        {% for instance in queryset %}
+        {% for stock in items %}
         <tr>
             <td>
                 <button class="custom-btn btn btn-link" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse{{forloop.counter}}" aria-expanded="false"
-                    aria-controls="collapse{{forloop.counter}}">
-                    {{forloop.counter}}
+                    data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
+                    aria-controls="collapse{{ forloop.counter }}">
+                    {{ forloop.counter }}
                 </button>
             </td>
-            <td><a href="{% url 'update_items' instance.id %}">{{instance.item_name|title}}</a></td>
+            <td><a href="{% url 'update_items' stock.id %}">{{ stock.item_name|title }}</a></td>
             <td>
-                {% if instance.quantity <= instance.reorder_level %}
+                {% if stock.quantity <= stock.reorder_level %}
                 <div style="background-color: orange;">
-                    {{instance.quantity}}
+                    {{ stock.quantity }}
                 </div>
                 {% else %}
-                {{instance.quantity}}
+                {{ stock.quantity }}
                 {% endif %}
             </td>
             <td>
-                <a href="{% url 'receive_items' instance.id %}"><i class="fa-solid fa-hand-holding-hand custom-icon"
+                <a href="{% url 'receive_items' stock.id %}"><i class="fa-solid fa-hand-holding-hand custom-icon"
                         data-toggle="tooltip" data-placement="top" title="Item In"></i></a>
-                <a href="{% url 'issue_items' instance.id %}"><i class="fa-solid fa-hand-holding custom-icon"
+                <a href="{% url 'issue_items' stock.id %}"><i class="fa-solid fa-hand-holding custom-icon"
                         data-toggle="tooltip" data-placement="top" title="Item Out"></i></a>
-                <a href="{% url 'item_detail' instance.id %}"><i class="fa-solid fa-info custom-icon"></i></a>
-                <a href="{% url 'update_items' instance.id %}"><i class="fa-solid fa-pen-to-square custom-icon"></i></a>
-                <a href="{% url 'delete_items' instance.id %}"><i class="fa-solid fa-trash"></i></a>
+                <a href="{% url 'item_detail' stock.id %}"><i class="fa-solid fa-info custom-icon"></i></a>
+                <a href="{% url 'update_items' stock.id %}"><i class="fa-solid fa-pen-to-square custom-icon"></i></a>
+                <a href="{% url 'delete_items' stock.id %}"><i class="fa-solid fa-trash"></i></a>
             </td>
         </tr>
         <tr>
             <td colspan="7">
-                <div class="collapse" id="collapse{{forloop.counter}}">
+                <div class="collapse" id="collapse{{ forloop.counter }}">
                     <div class="card card-body">
                         <table class="table">
                             <tr>
                                 <th>HOUSEHOLD</th>
-                                <td>{{instance.household}}</td>
+                                <td>{{ stock.household }}</td>
                             </tr>
                             <tr>
                                 <th>CATEGORY</th>
-                                <td>{{instance.category}}</td>
+                                <td>{{ stock.category }}</td>
                             </tr>
                             <tr>
                                 <th>ROOM</th>
-                                <td>{{instance.room}}</td>
+                                <td>{{ stock.room }}</td>
                             </tr>
                             <tr>
                                 <th>HAS WARRANTY</th>
-                                <td>{% if instance.has_warranty %}
+                                <td>
+                                    {% if stock.has_warranty %}
                                     Yes
                                     {% else %}
                                     No
@@ -206,65 +206,71 @@
             <tr>
                 <th>COUNT</th>
                 <th>ITEM NAME</th>
-                <th>UPDATE/DELETE</th>
             </tr>
         </thead>
-        {% for instance in queryset %}
+        {% for stock in items %}
         <tr>
             <td>
                 <button class="custom-btn btn btn-link" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse{{forloop.counter}}" aria-expanded="false"
-                    aria-controls="collapse{{forloop.counter}}">
-                    {{forloop.counter}}
+                    data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
+                    aria-controls="collapse{{ forloop.counter }}">
+                    {{ forloop.counter }}
                 </button>
             </td>
-            <td><a href="{% url 'update_items' instance.id %}">{{instance.item_name|title}}</a></td>
-            <td>
-                <a href="{% url 'receive_items' instance.id %}"><i class="fa-solid fa-hand-holding-hand custom-icon"
-                        data-toggle="tooltip" data-placement="top" title="Item In"></i></a>
-                <a href="{% url 'issue_items' instance.id %}"><i class="fa-solid fa-hand-holding custom-icon"
-                        data-toggle="tooltip" data-placement="top" title="Item Out"></i></a>
-                <a href="{% url 'item_detail' instance.id %}"><i class="fa-solid fa-info custom-icon"></i></a>
-                <a href="{% url 'update_items' instance.id %}"><i class="fa-solid fa-pen-to-square custom-icon"></i></a>
-                <a href="{% url 'delete_items' instance.id %}"><i class="fa-solid fa-trash"></i></a>
-            </td>
+            <td><a href="{% url 'update_items' stock.id %}">{{ stock.item_name|title }}</a></td>
         </tr>
         <tr>
             <td colspan="7">
-                <div class="collapse" id="collapse{{forloop.counter}}">
+                <div class="collapse" id="collapse{{ forloop.counter }}">
                     <div class="card card-body">
                         <table class="table">
                             <tr>
                                 <th>HOUSEHOLD</th>
-                                <td>{{instance.household}}</td>
+                                <td>{{ stock.household }}</td>
                             </tr>
                             <tr>
                                 <th>CATEGORY</th>
-                                <td>{{instance.category}}</td>
+                                <td>{{ stock.category }}</td>
                             </tr>
                             <tr>
                                 <th>ROOM</th>
-                                <td>{{instance.room}}</td>
+                                <td>{{ stock.room }}</td>
                             </tr>
                             <tr>
                                 <th>QUANTITY</th>
                                 <td>
-                                    {% if instance.quantity <= instance.reorder_level %}
+                                    {% if stock.quantity <= stock.reorder_level %}
                                     <div style="background-color: orange;">
-                                        {{instance.quantity}}
+                                        {{ stock.quantity }}
                                     </div>
                                     {% else %}
-                                    {{instance.quantity}}
+                                    {{ stock.quantity }}
                                     {% endif %}
                                 </td>
                             </tr>
                             <tr>
                                 <th>HAS WARRANTY</th>
-                                <td>{% if instance.has_warranty %}
+                                <td>
+                                    {% if stock.has_warranty %}
                                     Yes
                                     {% else %}
                                     No
                                     {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <a href="{% url 'receive_items' stock.id %}"><i
+                                            class="fa-solid fa-hand-holding-hand custom-icon" data-toggle="tooltip"
+                                            data-placement="top" title="Item In"></i></a>
+                                    <a href="{% url 'issue_items' stock.id %}"><i
+                                            class="fa-solid fa-hand-holding custom-icon" data-toggle="tooltip"
+                                            data-placement="top" title="Item Out"></i></a>
+                                    <a href="{% url 'item_detail' stock.id %}"><i
+                                            class="fa-solid fa-info custom-icon"></i></a>
+                                    <a href="{% url 'update_items' stock.id %}"><i
+                                            class="fa-solid fa-pen-to-square custom-icon"></i></a>
+                                    <a href="{% url 'delete_items' stock.id %}"><i class="fa-solid fa-trash"></i></a>
                                 </td>
                             </tr>
                         </table>
@@ -276,12 +282,89 @@
         {% endfor %}
     </table>
 </div>
+<!-- Small Table Ends -->
 
+<!-- Add Bootstrap Pagination -->
+<br>
+<div class="d-sm-none d-md-block d-sm-none d-none">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                {% if items.has_previous %}
+                <a class="page-link" href="?page=1">&laquo; First</a>
+                {% else %}
+                <span class="page-link disabled">&laquo; First</span>
+                {% endif %}
+            </li>
+            <li class="page-item">
+                {% if items.has_previous %}
+                <a class="page-link" href="?page={{ items.previous_page_number }}">Previous</a>
+                {% else %}
+                <span class="page-link disabled">Previous</span>
+                {% endif %}
+            </li>
+            <li class="page-item">
+                <span class="page-link">
+                    Page {{ items.number }} of {{ items.paginator.num_pages }}
+                </span>
+            </li>
+            <li class="page-item">
+                {% if items.has_next %}
+                <a class="page-link" href="?page={{ items.next_page_number }}">Next</a>
+                {% else %}
+                <span class="page-link disabled">Next</span>
+                {% endif %}
+            </li>
+            <li class="page-item">
+                {% if items.has_next %}
+                <a class="page-link" href="?page={{ items.paginator.num_pages }}">Last &raquo;</a>
+                {% else %}
+                <span class="page-link disabled">Last &raquo;</span>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+</div>
 
+<div class="d-sm-block d-md-none d-block">
+    <!-- Add Bootstrap Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if items.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="First">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ items.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">{{ items.number }} <span class="sr-only">(current)</span></span>
+            </li>
+
+            {% if items.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ items.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ items.paginator.num_pages }}" aria-label="Last">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
 {% endblock %}
 
 {% block afterloadjs %}
-
 <script>
     $(document).ready(function () {
         $('#myTable').DataTable(); // Initialize DataTables on your table with the ID "myTable"
@@ -298,8 +381,4 @@
         this.submit();
     });
 </script>
-
-
-
-
 {% endblock %}

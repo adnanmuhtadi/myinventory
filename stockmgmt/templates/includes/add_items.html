@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<form method="POST">
+<form method="POST" class="custom-fields">
     {% csrf_token %}
     <!--{{ form|crispy }}-->
     <br>
@@ -124,10 +124,13 @@
     <!-- For the back button to go back to the previous screen and the save button 
     to back to the add-item page while save another will save and stay on the page -->
     <div class="form-group text-center">
-        <a id="back-button" href="" onclick="javascript:window.history.back(-1);return false;">
+        <a id="back-button" onclick="javascript:window.history.back(-1);return false;">
             <div class="custom-btn btn btn-warning">Back</div>
         </a>
-        <input type="submit" value='Save' class="custom-btn btn btn-primary" />
+        <input type="submit" name="save" value='Save' class="custom-btn btn btn-primary" />
+        {% if 'update' not in request.path %}
+        <input type="submit" name="add_another" value='Add Another' class="custom-btn btn btn-primary" />
+        {% endif %}
     </div>
 </form>
 
