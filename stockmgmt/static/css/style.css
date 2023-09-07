@@ -1,5 +1,9 @@
 body {
-    background-color: #cacaca;
+    background-image: url("../img/bg.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+	height: 100vh;
 }
 
 /*Align the title to the center of the page*/
