@@ -18,11 +18,9 @@ from django.core.paginator import Paginator
 # Home View
 ############################################################
 def home(request):
-    title = 'Welcome: This is the Home Page'
-    form = 'Welcome: This is the Home Page'
+    title = 'Adnan Stock Management System'
     context = {
         "title": title,
-        "test": form,
     }
 
     return render(request, "./includes/home.html", context)
