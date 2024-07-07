@@ -281,18 +281,25 @@
                             <tr>
                                 <td colspan="2">
                                     <!-- Links for Actions -->
-                                    <a href="{% url 'receive_items' stock.id %}"><i
-                                            class="fa-solid fa-hand-holding-hand custom-icon" data-toggle="tooltip"
-                                            data-placement="top" title="Item In"></i></a>
-                                    <a href="{% url 'issue_items' stock.id %}"><i
-                                            class="fa-solid fa-hand-holding custom-icon" data-toggle="tooltip"
-                                            data-placement="top" title="Item Out"></i></a>
-                                    <a href="{% url 'item_detail' stock.id %}"><i
-                                            class="fa-solid fa-info custom-icon"></i></a>
-                                    <a href="{% url 'update_items' stock.id %}"><i
-                                            class="fa-solid fa-pen-to-square custom-icon"></i></a>
-                                    <a href="{% url 'delete_items' stock.id %}"><i class="fa-solid fa-trash"></i></a>
+                                    <a href="{% url 'receive_items' stock.id %}">
+                                        <i class="fas fa-hand-holding-hand custom-icon" data-toggle="tooltip"
+                                            data-placement="top" title="Item In"></i>
+                                    </a>
+                                    <a href="{% url 'issue_items' stock.id %}">
+                                        <i class="fas fa-hand-holding custom-icon" data-toggle="tooltip"
+                                            data-placement="top" title="Item Out"></i>
+                                    </a>
+                                    <a href="{% url 'item_detail' stock.id %}">
+                                        <i class="fas fa-info custom-icon"></i>
+                                    </a>
+                                    <a href="{% url 'update_items' stock.id %}">
+                                        <i class="fas fa-pen-to-square custom-icon"></i>
+                                    </a>
+                                    <a href="{% url 'delete_items' stock.id %}">
+                                        <i class="fas fa-trash custom-icon"></i>
+                                    </a>
                                 </td>
+
                             </tr>
                         </table>
                         <!-- Add additional content related to this table row -->

@@ -2,73 +2,68 @@
 
 {% block title %}Item Details{% endblock %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
-<div class="btn-group" role="group">
+<div class="btn-group mb-3" role="group">
     <a href="{% url 'issue_items' queryset.id %}" class="btn btn-danger custom-btn">ITEM OUT</a>
     <a href="{% url 'receive_items' queryset.id %}" class="btn btn-primary custom-btn">ITEM IN</a>
 </div>
 
-<br><br>
-
-<div class="display_table">
+<div class="table-responsive">
     <table class="table">
-        <tr>
-            <th>ITEM NAME</th>
-            <td>{{ queryset.item_name }}</td>
-        </tr>
-        <tr>
-            <th>CATEGORY</th>
-            <td>{{ queryset.category }}</td>
-        </tr>
-        <tr>
-            <th>HOUSEHOLD</th>
-            <td>{{ queryset.household }}</td>
-        </tr>
-        <tr>
-            <th>ROOM</th>
-            <td>{{ queryset.room }}</td>
-        </tr>
-        <tr>
-            <th>LOCATION</th>
-            <td>{{ queryset.location }}</td>
-        </tr>
-        <tr>
-            <th>QUANTITY AVAILABLE</th>
-            <td>{{ queryset.quantity }}</td>
-        </tr>
-        <tr>
-            <th>REORDER LEVEL</th>
-            <td>
-                {% if request.user.is_superuser %}
-                <a href="{% url 'reorder_level' queryset.id %}">{{ queryset.reorder_level }}</a>
-                {% else %}
-                {{ queryset.reorder_level }}
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>LAST UPDATED</th>
-            <td>{{ queryset.last_updated|date:"d-m-Y" }}</td>
-        </tr>
-        <tr>
-            <th>HAS WARRANTY</th>
-            <td>{% if instance.has_warranty %}Yes{% else %}No{% endif %}</td>
-        </tr>
-        <tr>
-            <th>ITEM NOTES</th>
-            <td>{{ queryset.item_notes }}</td>
-        </tr>
+        <tbody>
+            <tr>
+                <th>ITEM NAME</th>
+                <td>{{ queryset.item_name }}</td>
+            </tr>
+            <tr>
+                <th>CATEGORY</th>
+                <td>{{ queryset.category }}</td>
+            </tr>
+            <tr>
+                <th>HOUSEHOLD</th>
+                <td>{{ queryset.household }}</td>
+            </tr>
+            <tr>
+                <th>ROOM</th>
+                <td>{{ queryset.room }}</td>
+            </tr>
+            <tr>
+                <th>LOCATION</th>
+                <td>{{ queryset.location }}</td>
+            </tr>
+            <tr>
+                <th>QUANTITY AVAILABLE</th>
+                <td>{{ queryset.quantity }}</td>
+            </tr>
+            <tr>
+                <th>REORDER LEVEL</th>
+                <td>
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'reorder_level' queryset.id %}">{{ queryset.reorder_level }}</a>
+                    {% else %}
+                    {{ queryset.reorder_level }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>LAST UPDATED</th>
+                <td>{{ queryset.last_updated|date:"d-m-Y" }}</td>
+            </tr>
+            <tr>
+                <th>HAS WARRANTY</th>
+                <td>{% if instance.has_warranty %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>ITEM NOTES</th>
+                <td>{{ queryset.item_notes }}</td>
+            </tr>
+        </tbody>
     </table>
 </div>
-
-<br />
 
 <div class="form-group">
     <a href="javascript:window.history.back(-1);" class="btn btn-warning">Back</a>
 </div>
-
 {% endblock %}
 
 {% block afterloadjs %}

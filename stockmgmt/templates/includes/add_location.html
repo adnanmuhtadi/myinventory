@@ -5,62 +5,127 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Form Section -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Add Location</h5>
+                    <i class="fas fa-map-marker-alt fa-lg"></i> <!-- Location Icon -->
+                </div>
+                <div class="card-body">
+                    <form method="POST" class="custom-fields needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.name|as_crispy_field }}
+                            {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.name.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3 text-end">
+                            {% if 'add' not in request.path %}
+                            <a id="back-button" href="#" onclick="javascript:window.history.back(-1);return false;"
+                                class="btn btn-secondary me-2">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </a>
+                            {% endif %}
+                            <button type="submit" name="save" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            {% if 'update' not in request.path %}
+                            <button type="submit" name="add_another" class="btn btn-outline-primary">
+                                <i class="fas fa-plus"></i> Add Another
+                            </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-<form method="POST" class="custom-fields">
-    {% csrf_token %}
-    <!--{{ form|crispy }}-->
-    <div>
-        <div>
-            {{ form.name|as_crispy_field }}
+        <!-- Existing Locations Section -->
+        <div class="col-md-6">
+            {% if 'update' not in request.path %}
+            <div class="card shadow-sm mt-4 mt-md-0">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Existing Locations</h5>
+                    <i class="fas fa-list-alt fa-lg"></i> <!-- List Icon -->
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Count of Items</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for instance in locations %}
+                                <tr>
+                                    <td>{{ instance.name|title }}</td>
+                                    <td>{{ instance.total_quantity }}</td>
+                                    <td>
+                                        <a href="{% url 'update_location' instance.id %}"
+                                            class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="fa-solid fa-pen-to-square"></i> Update
+                                        </a>
+                                        <a href="#" class="btn btn-sm btn-outline-danger"
+                                            onclick="deleteLocationConfirmation('{{ instance.name|title }}', '{% url 'delete_location' instance.id %}')">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
-    <!-- For the back button to go back to the previous screen and the save button 
-    to back to the add-item page while save another will save and stay on the page -->
-    <div class="form-group">
-        {% if 'add' not in request.path %}
-        <a id="back-button" onclick="javascript:window.history.back(-1);return false;">
-            <div class="custom-btn btn btn-warning">Back</div>
-        </a>
-        {% endif %}
-        <input type="submit" name="save" value='Save' class="custom-btn btn btn-primary" />
-        {% if 'update' not in request.path %}
-        <input type="submit" name="add_another" value='Add Another' class="custom-btn btn btn-primary" />
-        {% endif %}
-    </div>
-</form>
-
-<br />
-
-{% if 'update' not in request.path %}
-<!-- The delete icon will take the id of the title and activate 
-    the sweetalert where the confirmation would take place-->
-<div class="display_table" id="display_table">
-    <table class='table'>
-        <thead>
-            <tr>
-                <th>NAME</th>
-                <th>COUNT OF ITEMS</th>
-                <th>UPDATE/DELETE</th>
-            </tr>
-        </thead>
-        {% for instance in locations %}
-        <tr>
-            <td>{{ instance.name|title }}</td>
-            <td>{{ instance.total_quantity }}</td>
-            <td><a href="{% url 'update_location' instance.id %}"><i class="fa-solid fa-pen-to-square px-3"></i></a>
-                <a class="pointer"
-                    onclick="deleteLocationConfirmation('{{ instance.name.title }}', '{% url 'delete_location' instance.id %}')">
-                    <i class="fa-solid fa-trash px-3"></i>
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
 </div>
-{% endif %}
-
 {% endblock %}
 
 {% block afterloadjs %}
+<script>
+    // SweetAlert2 for better confirmation dialogs
+    function deleteLocationConfirmation(name, url) {
+        Swal.fire({
+            title: 'Delete Location?',
+            text: `Are you sure you want to delete the location named ${name}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    }
 
+    // Client-side validation
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    });
+</script>
 {% endblock %}

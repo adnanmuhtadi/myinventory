@@ -5,278 +5,109 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<!-- Search Form for Large Screens -->
-<form method="POST" action="" class="d-lg-block d-md-none d-sm-none d-none">
-    <div class="row">
-        <div class="col-3">
-            {{ form.category|as_crispy_field }}
+<!-- Search Form -->
+<div class="container">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-lg-3 col-md-6">
+                {{ form.category|as_crispy_field }}
+            </div>
+            <div class="col-lg-3 col-md-6">
+                {{ form.item_name|as_crispy_field }}
+            </div>
+            <div class="col-lg-3 col-md-6">
+                {{ form.start_date|as_crispy_field }}
+            </div>
+            <div class="col-lg-3 col-md-6">
+                {{ form.end_date|as_crispy_field }}
+            </div>
         </div>
-        <div class="col-3">
-            {{ form.item_name|as_crispy_field }}
+        <div class="row">
+            <div class="col">
+                {{ form.export_to_CSV|as_crispy_field }}
+            </div>
+            <div class="col">
+                <input type="submit" class="btn btn-primary" value="Search">
+            </div>
         </div>
-        <div class="col-3">
-            {{ form.start_date|as_crispy_field }}
-        </div>
-        <div class="col-3">
-            {{ form.end_date|as_crispy_field }}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            {{ form.export_to_CSV|as_crispy_field }}
-        </div>
-    </div>
-    <input type="submit" value="Search" />
-</form>
+    </form>
+</div>
 
-<!-- Search Form for Small Screens (Accordion) -->
-<div class="accordion d-lg-none d-md-block d-sm-block d-block" id="accordionExample">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                aria-expanded="false" aria-controls="collapseOne">
-                Search Filters
-            </button>
-        </h2>
-        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-            data-bs-parent="#accordionExample">
-            <div class="accordion-body">
-                <!-- Search Form for Small Screens -->
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    <div class="row">
-                        <!-- Form Fields for Filtering -->
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            {{ form.category|as_crispy_field }}
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            {{ form.item_name|as_crispy_field }}
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            {{ form.start_date|as_crispy_field }}
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            {{ form.end_date|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            {{ form.export_to_CSV|as_crispy_field }}
-                        </div>
-                    </div>
-                    <input type="submit" value="Search" />
-                </form>
+<!-- Display Tables -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="display_table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>COUNT</th>
+                            <th>ID</th>
+                            <th>CATEGORY</th>
+                            <th>ITEM NAME</th>
+                            <th>QUANTITY IN STORE</th>
+                            <th>ITEM OUT</th>
+                            <th>ITEM IN</th>
+                            <th>LAST UPDATED</th>
+                        </tr>
+                    </thead>
+                    {% for item in page %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.category }}</td>
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.issue_quantity }}</td>
+                        <td>{{ item.receive_quantity }}</td>
+                        <td>{{ item.last_updated|date:"Y-m-d H:i:s" }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
     </div>
+
+    <!-- Pagination -->
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">&laquo; First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item">
+                        <span class="page-link">
+                            Page {{ page.number }} of {{ page.paginator.num_pages }}
+                        </span>
+                    </li>
+                    {% if page.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page.next_page_number }}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page.paginator.num_pages }}">Last &raquo;</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
 
-<br>
-
-<!-- Large Table Begins -->
-<div class="display_table d-lg-block d-md-none d-none">
-    <table class='table'>
-        <thead>
-            <tr>
-                <th>COUNT</th>
-                <th>ID</th>
-                <th>CATEGORY</th>
-                <th>ITEM NAME</th>
-                <th>QUANTITY IN STORE</th>
-                <th>ITEM OUT</th>
-                <th>ITEM IN</th>
-                <th>LAST UPDATED</th>
-            </tr>
-        </thead>
-        {% for item in page %}
-        <tr>
-            <td>{{forloop.counter}}</td>
-            <td>{{item.id}}</td>
-            <td>{{item.category}}</td>
-            <td>{{item.item_name}}</td>
-            <td>{{item.quantity}}</td>
-            <td>{{item.issue_quantity}}</td>
-            <td>{{item.receive_quantity}}</td>
-            <td>{{item.last_updated|date:"Y-m-d H:i:s"}}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
-<!-- Large Table Ends -->
-
-<!-- Medium Table Begins -->
-<div class="display_table d-lg-none d-md-block d-sm-none d-none">
-    <table class='table'>
-        <thead>
-            <tr>
-                <th>COUNT</th>
-                <th>ID</th>
-                <th>CATEGORY</th>
-                <th>ITEM NAME</th>
-                <th>QUANTITY IN STORE</th>
-                <th>ITEM OUT</th>
-                <th>ITEM IN</th>
-                <th>LAST UPDATED</th>
-            </tr>
-        </thead>
-        {% for item in page %}
-        <tr>
-            <td>{{forloop.counter }}</td>
-            <td>{{item.id}}</td>
-            <td>{{item.category}}</td>
-            <td>{{item.item_name}}</td>
-            <td>{{item.quantity}}</td>
-            <td>{{item.issue_quantity}}</td>
-            <td>{{item.receive_quantity}}</td>
-            <td>{{item.last_updated|date:"Y-m-d H:i:s"}}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
-<!-- Medium Table Ends -->
-
-<!-- Small Table Begins -->
-<div class="display_table d-lg-none d-md-none d-sm-block">
-    <table class="table">
-        <thead>
-            <!-- Table Headers -->
-            <tr>
-                <th>COUNT</th>
-                <th>ITEM NAME</th>
-                <th>ITEM OUT</th>
-                <th>ITEM IN</th>
-            </tr>
-        </thead>
-        {% for item in page %}
-        <!-- Table Rows -->
-        <tr>
-            <td>
-                <button class="custom-btn btn btn-link" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
-                    aria-controls="collapse{{ forloop.counter }}">
-                    {{ forloop.counter }}
-                </button>
-            </td>
-            <td>{{ item.item_name|title }}</td>
-            <td>{{item.issue_quantity}}</td>
-            <td>{{item.receive_quantity}}</td>
-        </tr>
-        <!-- Additional Details in Collapsible Row -->
-        <tr>
-            <td colspan="7">
-                <div class="collapse" id="collapse{{ forloop.counter }}">
-                    <div class="card card-body">
-                        <table class="table">
-                            <!-- Additional Details -->
-                            <tr>
-                                <th>ID</th>
-                                <td>{{ item.id }}</td>
-                            </tr>
-                            <tr>
-                                <th>CATEGORY</th>
-                                <td>{{ item.category }}</td>
-                            </tr>
-                            <tr>
-                                <th>QUANTITY</th>
-                                <td>{{ item.quantity }}</td>
-                            </tr>
-                            <tr>
-                                <th>LAST UPDATED</th>
-                                <td>{{ item.last_updated|date:"Y-m-d H:i:s" }}</td>
-                            </tr>
-                        </table>
-                        <!-- Add additional content related to this table row -->
-                    </div>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
-<!-- Small Table Ends -->
-
-<br />
-<div class="form-group">
-    <a id="back-button" onclick="javascript:window.history.back(-1);return false;">
-        <div class="custom-btn btn btn-warning">Back</div>
-    </a>
-</div>
-
-<div class="d-sm-none d-md-block d-sm-none d-none">
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <li class="page-item">
-                {% if page.has_previous %}
-                <a class="page-link" href="?page=1">&laquo; First</a>
-                {% else %}
-                <span class="page-link disabled">&laquo; First</span>
-                {% endif %}
-            </li>
-            <li class="page-item">
-                {% if page.has_previous %}
-                <a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a>
-                {% else %}
-                <span class="page-link disabled">Previous</span>
-                {% endif %}
-            </li>
-            <li class="page-item">
-                <span class="page-link">
-                    Page {{ page.number }} of {{ page.paginator.num_pages }}
-                </span>
-            </li>
-            <li class="page-item">
-                {% if page.has_next %}
-                <a class="page-link" href="?page={{ page.next_page_number }}">Next</a>
-                {% else %}
-                <span class="page-link disabled">Next</span>
-                {% endif %}
-            </li>
-            <li class="page-item">
-                {% if page.has_next %}
-                <a class="page-link" href="?page={{ page.paginator.num_pages }}">Last &raquo;</a>
-                {% else %}
-                <span class="page-link disabled">Last &raquo;</span>
-                {% endif %}
-            </li>
-        </ul>
-    </nav>
-</div>
-
-<div class="d-sm-block d-md-none d-block">
-    <!-- Add Bootstrap Pagination -->
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            {% if page.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page=1" aria-label="First">
-                    <span aria-hidden="true">&laquo;&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page.previous_page_number }}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            {% endif %}
-
-            <li class="page-item active">
-                <span class="page-link">{{ page.number }} <span class="sr-only">(current)</span></span>
-            </li>
-
-            {% if page.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page.next_page_number }}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Last">
-                    <span aria-hidden="true">&raquo;&raquo;</span>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
+<!-- Back Button -->
+<div class="container mt-3">
+    <div class="form-group">
+        <a id="back-button" onclick="javascript:window.history.back(-1);return false;">
+            <div class="btn btn-warning">Back</div>
+        </a>
+    </div>
 </div>
 
 {% endblock %}

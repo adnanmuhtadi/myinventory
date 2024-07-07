@@ -24,12 +24,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'list_history' %}">List History</a>
                     </li>
-                    {% if request.user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'add_items' %}">Add Item</a>
                     </li>
                     {% endif %}
-
                     {% if request.user.is_superuser %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -47,18 +45,28 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% endif %}
-
                 </ul>
                 <ul class="navbar-nav">
                     {% if request.user.is_authenticated %}
-                    <li><a href="/accounts/logout"><button class="custom-btn btn btn-danger">{{ user }} |
-                                Logout</button></a></li>
+                    <li>
+                        <form action="/accounts/logout" method="post">
+                            {% csrf_token %}
+                            <button class="custom-btn btn btn-danger" type="submit">{{ request.user }} | Logout</button>
+                        </form>
+                    </li>
                     {% else %}
-                    <li><a href="/accounts/login">Login</a></li>
+                    <li><a class="nav-link" href="/accounts/login">Login</a></li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </div>
 </nav>
+
+<script>
+    // Initialize offcanvas navigation
+    document.addEventListener('DOMContentLoaded', function () {
+        var offcanvasElement = document.getElementById('offcanvasNavbar2');
+        var offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+    });
+</script>

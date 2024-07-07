@@ -11,30 +11,35 @@
     {{ form|crispy }}
 
     <br />
-    <!-- For the back button to go back to the previous screen and the save button 
-    to back to the add-item page while save another will save and stay on the page -->
     <div class="form-group text-center">
-        <a onclick="javascript:window.history.back(-1);return false;">
+        <!-- Use proper anchor tag for navigation -->
+        <a href="#" onclick="goBack();">
             <div class="custom-btn btn btn-warning">Back</div>
         </a>
         <button type="submit" name="save" class="custom-btn btn btn-primary multi-line-btn">
-            Save / Item List
+            Save and Return to Item List
         </button>
         <button type="submit" name="add_another" class="custom-btn btn btn-primary multi-line-btn">
-            Save / Item Detail
+            Save and Add Another Item
         </button>
     </div>
 </form>
 
+{% endblock %}
+
+{% block afterloadjs %}
 <script>
-    // Add this JavaScript code to clear form fields when the page loads
+    // JavaScript function to handle form submission
+    function goBack() {
+        window.history.back();
+    }
+
+    // JavaScript to reset form fields when the page loads
     document.addEventListener('DOMContentLoaded', function () {
         var form = document.getElementById('your-form');
         if (form) {
-            // Reset the form fields
-            form.reset();
+            form.reset(); // Reset form fields
         }
     });
 </script>
-
 {% endblock %}
